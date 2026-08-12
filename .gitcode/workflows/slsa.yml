@@ -1,0 +1,63 @@
+name: SLSA 软件供应链溯源 (GitCode)
+
+# 对应 GitHub 的 generator-generic-ossf-slsa3-publish.yml
+# GitCode 无 slsa-github-generator 可复用工作流,此处生成 in-toto/SLSA v0.2 风格的溯源文件与 SHA256 摘要
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  repository: read
+
+jobs:
+  provenance:
+    name: 生成 SLSA 溯源
+    runs-on: [ubuntu-latest, x64, small]
+    steps:
+      - name: Checkout
+        uses: checkout
+
+      - name: 构建产物
+        run: |
+          echo "artifact1" > artifact1
+          echo "artifact2" > artifact2
+
+      - name: 生成 SHA256 摘要与溯源文件
+        run: |
+          mkdir -p /tmp/prov
+          sha256sum artifact1 artifact2 > /tmp/prov/SHA256SUMS
+          python3 - "$ATOMGIT_REPOSITORY" "$ATOMGIT_SHA" <<'PY'
+          import hashlib, json, sys
+          repo, sha = sys.argv[1], sys.argv[2]
+          subjects = []
+          for name in ["artifact1", "artifact2"]:
+              h = hashlib.sha256(open(name, "rb").read()).hexdigest()
+              subjects.append({"name": name, "digest": {"sha256": h}})
+          statement = {
+              "_type": "https://in-toto.io/Statement/v0.1",
+              "subject": subjects,
+              "predicateType": "https://slsa.dev/provenance/v0.2",
+              "predicate": {
+                  "builder": {"id": f"https://gitcode.com/{repo}/actions"},
+                  "buildType": "https://gitcode.com/action/release",
+                  "invocation": {
+                      "configSource": {
+                          "uri": f"git+https://gitcode.com/{repo}",
+                          "digest": {"sha1": sha},
+                      }
+                  },
+                  "metadata": {"buildInvocationId": f"{repo}-{sha}"},
+              },
+          }
+          with open("/tmp/prov/provenance.json", "w", encoding="utf-8") as fp:
+              json.dump(statement, fp, ensure_ascii=False, indent=2)
+          print("provenance written")
+          PY
+
+      - name: 上传溯源文件
+        uses: upload-artifact
+        with:
+          name: slsa-provenance
+          path: /tmp/prov/

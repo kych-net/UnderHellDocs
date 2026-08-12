@@ -1,0 +1,112 @@
+name: Release (GitCode)
+
+# 与 GitHub Actions 的 release.yml 对应;GitCode 托管 Runner 仅提供 Linux(x64/arm64)
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  repository: write
+
+jobs:
+  # ---------- 创建/更新发行版 (最先运行,协调者) ----------
+  create-release:
+    name: 创建发行版
+    runs-on: [ubuntu-latest, x64, small]
+    outputs:
+      tag_name: ${{ steps.meta.outputs.tag_name }}
+    steps:
+      - name: 计算标签名
+        id: meta
+        run: |
+          if [[ "${ATOMGIT_REF}" == refs/tags/* ]]; then
+            echo "tag_name=${ATOMGIT_REF_NAME}" >> "$ATOMGIT_OUTPUT"
+          else
+            echo "tag_name=latest" >> "$ATOMGIT_OUTPUT"
+          fi
+
+      - name: 创建或更新 Release (v5 API)
+        env:
+          TAG: ${{ steps.meta.outputs.tag_name }}
+        run: |
+          set +e
+          API="https://gitcode.com/api/v5/repos/${ATOMGIT_REPOSITORY}"
+          if curl -sf "${API}/releases/tags/${TAG}?access_token=${ATOMGIT_TOKEN}" >/dev/null 2>&1; then
+            curl -s -X PATCH "${API}/releases/tag/${TAG}?access_token=${ATOMGIT_TOKEN}" \
+              -H "Content-Type: application/json" \
+              -d "{\"name\":\"${TAG}\",\"body\":\"GitCode Actions 自动构建 ${ATOMGIT_SHA}\"}" >/dev/null || true
+            echo "已更新 Release: ${TAG}"
+          else
+            curl -s -X POST "${API}/releases?access_token=${ATOMGIT_TOKEN}" \
+              -H "Content-Type: application/json" \
+              -d "{\"tag_name\":\"${TAG}\",\"name\":\"${TAG}\",\"body\":\"GitCode Actions 自动构建 ${ATOMGIT_SHA}\",\"draft\":false,\"prerelease\":false}" >/dev/null || true
+            echo "已创建 Release: ${TAG}"
+          fi
+          exit 0
+
+  # ---------- PDF 文档 (普通版 + 打印版 + 小屏版) ----------
+  pdf:
+    name: PDF 文档
+    needs: create-release
+    runs-on: [ubuntu-24, x64, small]
+    steps:
+      - name: Checkout
+        uses: checkout
+
+      # 文档通过相对路径引用外部资源:
+      #   #import "../模板/lib.typ"            -> 需要相邻的 模板/ 目录
+      #   #image("../图片/地狱与深渊示意图.svg") -> 需要相邻的 图片/ 目录
+      # Makefile 使用 --root .. ,故把依赖放到工作目录的父目录
+      - name: 拉取编译依赖 (模板 + 图片)
+        run: |
+          PARENT="$(dirname "$ATOMGIT_WORKSPACE")"
+          git clone --depth 1 https://gitcode.com/CrossDark/UnderHellTemplate.git "$PARENT/模板"
+          git clone --depth 1 https://gitcode.com/CrossDark/UnderHellImages.git "$PARENT/图片"
+          ls -la "$PARENT"
+
+      - name: 安装 Typst
+        run: |
+          TYPST_VERSION=0.14.2
+          curl -sL "https://github.com/typst/typst/releases/download/v${TYPST_VERSION}/typst-x86_64-unknown-linux-musl.tar.xz" -o /tmp/typst.tar.xz
+          tar -xJf /tmp/typst.tar.xz -C /tmp
+          echo "/tmp/typst-x86_64-unknown-linux-musl" >> "$ATOMGIT_PATH"
+
+      - name: 安装中文字体
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+
+      - name: 编译 PDF (普通版 + 打印版 + 小屏版)
+        run: make all print screen
+
+      - name: 收集产物
+        run: |
+          mkdir -p /tmp/artifacts
+          cp "dist/地狱之下.pdf"       "/tmp/artifacts/UnderHell.pdf"
+          cp "dist/地狱之下_打印版.pdf" "/tmp/artifacts/UnderHell-print.pdf"
+          cp "dist/地狱之下_小屏版.pdf" "/tmp/artifacts/UnderHell-screen.pdf"
+
+      - name: 上传产物 (Artifact)
+        uses: upload-artifact
+        with:
+          name: underhell-pdfs
+          path: /tmp/artifacts/
+
+      - name: 上传到 Release (尽力而为)
+        env:
+          TAG: ${{ needs.create-release.outputs.tag_name }}
+        run: |
+          API="https://gitcode.com/api/v5/repos/${ATOMGIT_REPOSITORY}"
+          for f in /tmp/artifacts/*; do
+            UPLOAD_URL=$(curl -s "${API}/releases/tag/${TAG}/upload-url?access_token=${ATOMGIT_TOKEN}" \
+              | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get("upload_url") or "")' 2>/dev/null)
+            if [ -n "$UPLOAD_URL" ]; then
+              curl -s -X POST "$UPLOAD_URL" -F "file=@$f" >/dev/null && echo "已上传附件: $f" || echo "附件上传失败: $f"
+            else
+              echo "警告: 未获取到上传地址, 跳过附件 $f (可改用 Artifact 下载)"
+            fi
+          done
