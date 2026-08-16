@@ -59,9 +59,9 @@ In function-argument positions (table/box titles, `name:`), wrap in `[ ]` to
 make a content block:
 
 ```typst
-#breakoutbox([#元素("天堂卫星")的能力], [...])
-#uhtab([#元素("热量循环系统")], [...])
-#statbox((name: [#元素("怪动植物")], ...))
+#提示框([#元素("天堂卫星")的能力], [...])
+#表格([#元素("热量循环系统")], [...])
+#属性框((name: [#元素("怪动植物")], ...))
 ```
 
 ## Switching systems
