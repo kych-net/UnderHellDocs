@@ -3,10 +3,11 @@ MAIN   := 地狱之下.typ
 OUT    := dist/地狱之下.pdf
 PRINT_OUT := dist/地狱之下_打印版.pdf
 SCREEN_OUT := dist/地狱之下_小屏版.pdf
+NOMEN_OUT := dist/地狱之下_$(NOMEN).pdf
 # --root .. 让项目根回到仓库根,以便访问 ../图片 等根目录资源
 FLAGS  := --root .. --font-path fonts
 
-.PHONY: all print screen clean
+.PHONY: all print screen nomen clean
 
 all: $(OUT)
 
@@ -25,6 +26,12 @@ print: $(MAIN)
 screen: $(MAIN)
 	@mkdir -p dist
 	$(TYPST) compile $(FLAGS) --input screen=true $(MAIN) $(SCREEN_OUT)
+
+# 名词系统版:make nomen NOMEN=academic 以指定名词系统编译
+# Nomenclature version: make nomen NOMEN=academic compiles with that system
+nomen: $(MAIN)
+	@mkdir -p dist
+	$(TYPST) compile $(FLAGS) --input nomen=$(NOMEN) $(MAIN) $(NOMEN_OUT)
 
 clean:
 	rm -rf dist
