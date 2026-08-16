@@ -25,25 +25,36 @@ element at compile time.
 
 | Path | Purpose |
 | ---- | ------- |
-| `文档/名词系统.csv` | The single CSV holding all systems. Columns: `id, system, term`. |
+| `文档/名词系统.csv` | The single wide-format CSV: header = systems, first col = element ids, cells = terms. |
 | `文档/地狱之下.typ` | Main world document (compiled with `--root ..`). |
 | `文档/地狱之下附录.typ` | Appendix, included by the main document. |
 | `模板/lib.typ` | Template; defines `#元素()`, `#set-nomen()`, `#set-nomen-data()`. |
 
 ## CSV format
 
+Wide-format CSV: the **header row lists the system names**, the **first column
+holds element ids**, and each **cell is that element's term under that system**
+(empty if the element has no name there).
+
 ```csv
-id,system,term
-怪动植物,别名,黑白怪物
-超级系统,academic,生物能量超级系统
+id,别名,academic
+怪物,,
+怪动物,白色怪物,
+怪植物,黑色怪物,
+怪动植物,黑白怪物,
+超级系统,,生物能量超级系统
+嗜血仙子,黑白仙女,
+水仙子,水仙女,
+蝶仙子,蝶仙女,
+花仙子,花仙女,
 ```
 
 - `id`: the element (must equal the common-system name).
-- `system`: the nomenclature system name (`别名`, `academic`, or any custom name).
-- `term`: the rendered name under that system.
-- **Do NOT add rows for the `普通` system** — it reads the ID directly.
-- The `别名` system is the conventional place for alternative/common names
-  (e.g. `怪动植物` → `黑白怪物`).
+- Each other column is a nomenclature system (`别名`, `academic`, or any custom
+  name). The `普通` system is **not a column** — it reads the ID directly.
+- A cell is empty when that system has no term for the element.
+- An element may appear on its own row with all system cells empty (e.g.
+  `怪物`), meaning it only has its common name.
 
 ## Using elements in text
 
@@ -86,16 +97,31 @@ Chinese label directly (`<教育>`, `@教育`).
 ## Adding a new concept
 
 1. Use `#元素("概念名")` in the document.
-2. If the concept has an alternative name in another system, add a row to
-   `名词系统.csv`:
-   `概念名,系统名,替代名词`
+2. Add a row to `名词系统.csv` with the element as `id`, filling only the
+   system columns that have an alternative name (leave the rest empty).
 3. Under 普通 it automatically renders the concept name itself.
+
+## 怪物 vs 怪物系统
+
+- `怪物` 和 `怪物系统` 是**两个不同的元素**,不要混用:
+  `怪物` 指个体/泛指(`#元素("怪物")`),`怪物系统` 指系统本身
+  (`#元素("怪物系统")`)。
+- `怪物` **不要别名**,不入 CSV;普通系统直接读 ID 返回"怪物"。
+- 怪物三大类为 `怪动物`/`怪植物`/`怪动植物`,其别名为
+  `白色怪物`/`黑色怪物`/`黑白怪物`。
+
+## 元素化范围
+
+- **仅核心概念用 `#元素(...)`**:地名、生物类别、专有系统名等。
+- **描述性文本保持普通文本**:如"怪物侧"、"仙子侧"、"怪物爪钩"、
+  "怪物分类"等部位/修饰词不用 `#元素()`。
+- 别名为"侧/爪钩/分类"等的概念不要元素化。
 
 ## Gotchas
 
 1. **Do not put `[#元素(...)]` in body text** — literal `[ ]` will render.
    Body text uses bare `#元素(...)`.
-2. **普通系统不写 CSV 行** — it reads the ID value directly.
+2. **普通系统不是 CSV 列** — it reads the ID value directly.
 3. **ID must equal the common name** so fallback works (`if t == none { id }`).
 4. **Editor is CSv-literal**: keep quotes/commas exact; a stray comma shifts
    the columns.
