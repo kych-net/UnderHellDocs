@@ -961,9 +961,10 @@ _TODO:待设定_
   #include "地狱之下附录.typ"
 ]
 
-#set heading(numbering: false)
-
-= 名词总表
+#block[
+  #set heading(numbering: none)
+  = 名词总表
+]
 
 下列表格汇总了本设定中全部核心概念在各名词系统下的对应名词。空白单元格表示该元素在该系统中未定义,自动回退到普通名词_即元素本身_。
 
