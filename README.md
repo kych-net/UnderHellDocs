@@ -1,5 +1,7 @@
 # 地狱之下 - 文档
 
+完整PDF在[发行版](https://gitcode.com/CrossDark/UnderHellDocs/releases/)
+
 [地狱之下 (UnderHell)](https://gitcode.com/CrossDark/UnderHell) 项目的 Typst 文档源码,使用架空世界模板渲染。
 
 ## 文件
