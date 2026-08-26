@@ -47,7 +47,7 @@ if [ ! -f "$CSV" ]; then
 else
   # 检查表头
   header=$(head -1 "$CSV")
-  if [ "$header" = "id,别名,academic" ]; then
+  if [ "$header" = "id,默认,别名,academic" ]; then
     pass "CSV 表头格式"
   else
     fail "CSV 表头不匹配: $header"
