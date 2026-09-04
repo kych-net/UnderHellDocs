@@ -1,4 +1,4 @@
-#import "../模板/lib.typ": *
+#import "../../模板/lib.typ": *
 
 = #设定元素[不对称婚姻]
 
