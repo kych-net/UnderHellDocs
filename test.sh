@@ -105,8 +105,8 @@ for f in ['地狱之下.typ', '地狱之下附录.typ']:
     try:
         src = open(f, encoding='utf-8').read()
         defined |= set(re.findall(r'<([^>]+)>', src))
-        # 元素标题(...)[名] 会在编译期生成 <名> 标签
-        defined |= set(re.findall(r'元素标题\([^)]*\)\[([^\]]+)\]', src))
+        # 设定元素(level: n)[名] 会在标题+锚点模式下于编译期生成 <名> 标签
+        defined |= set(re.findall(r'设定元素\([^)]*level:\s*\d+[^)]*\)\[([^\]]+)\]', src))
         used |= set(m.lstrip('@') for m in re.findall(r'@[A-Za-z\u4e00-\u9fff]+', src))
     except: pass
 orphan = used - defined
