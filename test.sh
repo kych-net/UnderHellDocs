@@ -16,7 +16,7 @@ cd "$(dirname "$0")"  # 文档/
 echo "=== 1. 编译测试 ==="
 
 for mode in "普通|  " "打印|--input print=true " "小屏|--input screen=true " \
-            "academic|--input nomen=academic " "别名|--input nomen=别名 "; do
+            "academic|--input 元素系统=academic " "别名|--input 元素系统=别名 "; do
   name="${mode%%|*}"
   args="${mode##*|}"
   args="${args%  }"
@@ -37,11 +37,11 @@ else
   fail "附录编译"
 fi
 
-# ---------- 2. 名词系统 CSV 校验 ----------
+# ---------- 2. 元素系统 CSV 校验 ----------
 echo ""
-echo "=== 2. 名词系统 CSV 校验 ==="
+echo "=== 2. 元素系统 CSV 校验 ==="
 
-CSV="名词系统.csv"
+CSV="元素系统.csv"
 if [ ! -f "$CSV" ]; then
   fail "CSV 文件不存在: $CSV"
 else

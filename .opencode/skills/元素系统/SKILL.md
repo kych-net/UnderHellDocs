@@ -1,13 +1,13 @@
 ---
-name: nomenclature-system
-description: Use when writing or editing the 地狱之下 world-building documents (文档/地狱之下.typ, 地狱之下附录.typ) and their 名词系统 (nomenclature system). Explains the 元素 function, the CSV format (名词系统.csv), how to reference core concepts, cross-reference labels/IDs, and how to add a new concept or nomenclature system.
+name: 元素系统
+description: Use when writing or editing the 地狱之下 world-building documents (文档/地狱之下.typ, 地狱之下附录.typ) and their 元素系统 (element system). Explains the 元素 function, the CSV format (元素系统.csv), how to reference core concepts, cross-reference labels/IDs, and how to add a new concept or element system.
 ---
 
-# 名词系统 (Nomenclature System)
+# 元素系统 (Element System)
 
-The 地狱之下 documents use a **nomenclature system**: one core concept (e.g. the
+The 地狱之下 documents use a **element system**: one core concept (e.g. the
 black-white monster 黑白怪物) is identified by an **元素** (element), and
-different 名词系统 (nomenclature systems) render different names for the same
+different 元素系统 (element systems) render different names for the same
 element at compile time.
 
 ## Core idea
@@ -17,7 +17,7 @@ element at compile time.
 - **普通系统直接读取 ID 的值**。The "普通" (common) system needs no CSV rows:
   `#元素("怪动植物")` under 普通 simply returns `怪动植物`.
 - **其他系统在 CSV 中为同一元素提供不同名词**。Other systems (e.g. `别名`,
-  `academic`) map an element to an alternative term in `名词系统.csv`.
+  `academic`) map an element to an alternative term in `元素系统.csv`.
 - **缺失自动回退**。If the current system lacks an element, it falls back to
   the common name (the ID itself).
 
@@ -25,10 +25,10 @@ element at compile time.
 
 | Path | Purpose |
 | ---- | ------- |
-| `文档/名词系统.csv` | The single wide-format CSV: header = systems, first col = element ids, cells = terms. |
+| `文档/元素系统.csv` | The single wide-format CSV: header = systems, first col = element ids, cells = terms. |
 | `文档/地狱之下.typ` | Main world document (compiled with `--root ..`). |
 | `文档/地狱之下附录.typ` | Appendix, included by the main document. |
-| `模板/lib.typ` | Template; defines `#元素()`, `#set-nomen()`, `#set-nomen-data()`. |
+| `模板/lib.typ` | Template; defines `#元素()`, `#设置元素系统()`, `#set-元素系统数据()`. |
 
 ## CSV format
 
@@ -50,7 +50,7 @@ id,别名,academic
 ```
 
 - `id`: the element (must equal the common-system name).
-- Each other column is a nomenclature system (`别名`, `academic`, or any custom
+- Each other column is a element system (`别名`, `academic`, or any custom
   name). The `普通` system is **not a column** — it reads the ID directly.
 - A cell is empty when that system has no term for the element.
 - An element may appear on its own row with all system cells empty (e.g.
@@ -77,9 +77,9 @@ make a content block:
 
 ## Switching systems
 
-- Compile-time: `typst compile --input nomen=academic 地狱之下.typ out.pdf`
-  (or `make nomen NOMEN=academic` in 文档/). Default is `普通`.
-- In-document: `#set-nomen("别名")` switches for the rest of the document.
+- Compile-time: `typst compile --input 元素系统=academic 地狱之下.typ out.pdf`
+  (or `make 元素系统 元素系统名=academic` in 文档/). Default is `普通`.
+- In-document: `#设置元素系统("别名")` switches for the rest of the document.
 
 ## Cross references
 
@@ -97,7 +97,7 @@ Chinese label directly (`<教育>`, `@教育`).
 ## Adding a new concept
 
 1. Use `#元素("概念名")` in the document.
-2. Add a row to `名词系统.csv` with the element as `id`, filling only the
+2. Add a row to `元素系统.csv` with the element as `id`, filling only the
    system columns that have an alternative name (leave the rest empty).
 3. Under 普通 it automatically renders the concept name itself.
 

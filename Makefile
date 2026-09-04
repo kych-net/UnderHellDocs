@@ -3,13 +3,13 @@ MAIN   := 地狱之下.typ
 OUT    := dist/地狱之下.pdf
 PRINT_OUT := dist/地狱之下_打印版.pdf
 SCREEN_OUT := dist/地狱之下_小屏版.pdf
-NOMEN_OUT := dist/地狱之下_$(NOMEN).pdf
+元素系统输出 := dist/地狱之下_$(元素系统名).pdf
 PNG_OUT   := dist/图片/地狱之下-{0p}.png
 SVG_OUT   := dist/图片/地狱之下-{0p}.svg
 # --root .. 让项目根回到仓库根,以便访问 ../图片 等根目录资源
 FLAGS  := --root .. --font-path fonts
 
-.PHONY: all print screen nomen png svg images clean
+.PHONY: all print screen 元素系统 png svg images clean
 
 all: $(OUT)
 
@@ -29,11 +29,11 @@ screen: $(MAIN)
 	@mkdir -p dist
 	$(TYPST) compile $(FLAGS) --input screen=true $(MAIN) $(SCREEN_OUT)
 
-# 名词系统版:make nomen NOMEN=academic 以指定名词系统编译
-# Nomenclature version: make nomen NOMEN=academic compiles with that system
-nomen: $(MAIN)
+# 元素系统版:make 元素系统 元素系统名=academic 以指定元素系统编译
+# Element-system version: make 元素系统 元素系统名=academic compiles with that system
+元素系统: $(MAIN)
 	@mkdir -p dist
-	$(TYPST) compile $(FLAGS) --input nomen=$(NOMEN) $(MAIN) $(NOMEN_OUT)
+	$(TYPST) compile $(FLAGS) --input 元素系统=$(元素系统名) $(MAIN) $(元素系统输出)
 
 # 编译为 PNG 图片,每页一图,输出到 dist/图片/
 # Compile to PNG images, one file per page
