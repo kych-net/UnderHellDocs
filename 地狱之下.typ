@@ -1,6 +1,8 @@
 #import "../模板/lib.typ": *
 #import "模块.typ": *
 
+// 共产主义理论扩大化尝试
+
 #show: 地狱之下模板.with(
   title: "地狱之下",
   subtitle: "一个崭新的世界",
