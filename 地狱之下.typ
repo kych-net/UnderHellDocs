@@ -276,7 +276,7 @@ _如何成为天堂?当然是让其它地区都变成地狱_
 
 #pagebreak()
 
-#set columns(1)
+#set page(columns: 1)
 
 #block[
   #set heading(numbering: none)
@@ -292,4 +292,8 @@ _如何成为天堂?当然是让其它地区都变成地狱_
   = TODO
 ]
 
-#TODO表格()
+#table(
+  columns: 3,
+  [*编号*], [*位置*], [*内容*], // 手动添加表头
+  ..csv("待办.csv").flatten().slice(3),  // 展开数据,切掉表头
+)
