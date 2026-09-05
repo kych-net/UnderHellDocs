@@ -274,6 +274,10 @@ _如何成为天堂?当然是让其它地区都变成地狱_
   #include "内容/附录.typ"
 ]
 
+#pagebreak()
+
+#set columns(1)
+
 #block[
   #set heading(numbering: none)
   = 元素总表
