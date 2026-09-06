@@ -7,7 +7,8 @@ SCREEN_OUT := dist/地狱之下_小屏版.pdf
 PNG_OUT   := dist/图片/地狱之下-{0p}.png
 SVG_OUT   := dist/图片/地狱之下-{0p}.svg
 # --root .. 让项目根回到仓库根,以便访问 ../图片 等根目录资源
-FLAGS  := --root .. --font-path fonts
+# --input 纲要=false:make 编译时隐藏"世界纲要"页;直接 typst 编译不传则默认显示
+FLAGS  := --root .. --font-path fonts --input 纲要=false
 
 .PHONY: all print screen 元素系统 png svg images clean
 
