@@ -23,7 +23,7 @@
     edge-stroke: 1.0pt,
     node-inset: 5pt,
 
-    // ===== 上排:世代交替主链 =====
+    // ===== 上排: 世代交替主链 =====
     node((0, 0), [*植物世代*\ 雄花♂/雌花♀], fill: rgb("#d4edda")),
     edge((0, 0), (1, 0), "->", label: text(fill: g)[♂♀花粉受精]),
     node((1, 0), [*花粉受精*], fill: bg),
