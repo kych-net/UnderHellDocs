@@ -11,7 +11,7 @@ FLAGS  := --root .. --font-path fonts
 
 .PHONY: all print screen 元素系统 png svg images clean
 
-all: $(OUT)
+all: $(OUT) print screen
 
 $(OUT): $(MAIN)
 	@mkdir -p dist
