@@ -10,7 +10,7 @@ SVG_OUT   := dist/图片/地狱之下-{0p}.svg
 # --input 纲要=false:make 编译时隐藏"世界纲要"页;直接 typst 编译不传则默认显示
 FLAGS  := --root .. --font-path fonts --input 纲要=false
 
-.PHONY: all print screen 元素系统 png svg images clean
+.PHONY: all print screen web 元素系统 png svg images clean
 
 all: $(OUT) print screen
 
@@ -35,6 +35,14 @@ screen: $(MAIN)
 元素系统: $(MAIN)
 	@mkdir -p dist
 	$(TYPST) compile $(FLAGS) --input 元素系统=$(元素系统名) $(MAIN) $(元素系统输出)
+
+# 网页版:HTML 导出,单栏、样式仿标准 PDF(--features html 为实验特性)
+# Web version: HTML export, single column, PDF-like styling
+WEB_OUT := dist/地狱之下.html
+web: $(MAIN)
+	@mkdir -p dist
+	$(TYPST) compile --features html $(FLAGS) --input web=true --format html $(MAIN) $(WEB_OUT)
+	@python3 /tmp/web_post.py $(WEB_OUT) ../模板/web.css
 
 # 编译为 PNG 图片,每页一图,输出到 dist/图片/
 # Compile to PNG images, one file per page
