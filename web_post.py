@@ -37,7 +37,7 @@ p.write_text(head + body, encoding="utf-8")
 
 # 3) 复制 PDF 背景图到输出目录(网页背景与 PDF 一致)
 import shutil
-bg = pathlib.Path(sys.argv[2]).parent.parent / "img" / "background.jpg"
+bg = pathlib.Path(sys.argv[2]).parent.parent / "模板" / "img" / "background.jpg"
 if bg.exists():
     shutil.copy(bg, p.parent / "background.jpg")
 
