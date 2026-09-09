@@ -42,7 +42,7 @@ WEB_OUT := dist/地狱之下.html
 web: $(MAIN)
 	@mkdir -p dist
 	$(TYPST) compile --features html $(FLAGS) --input web=true --format html $(MAIN) $(WEB_OUT)
-	@python3 web_post.py $(WEB_OUT) ../模板/web.css
+	@python3 -c "import pathlib; p=pathlib.Path('$(WEB_OUT)'); s=p.read_text(encoding='utf-8'); css=pathlib.Path('../模板/web.css').read_text(encoding='utf-8'); p.write_text(s.replace('/*UH_WEB_CSS*/', css), encoding='utf-8')"
 
 # 编译为 PNG 图片,每页一图,输出到 dist/图片/
 # Compile to PNG images, one file per page

@@ -1,2 +1,3 @@
 dist/
 *.pdf
+.DS_Store
