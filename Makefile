@@ -39,10 +39,11 @@ screen: $(MAIN)
 # 网页版:HTML 导出,单栏、样式仿标准 PDF(--features html 为实验特性)
 # Web version: HTML export, single column, PDF-like styling
 WEB_OUT := dist/地狱之下.html
-web: $(MAIN)
+web: $(MAIN) ../模板/lib.typ ../模板/web.css ../模板/webfonts/段宁毛笔小楷.ttf
 	@mkdir -p dist
 	$(TYPST) compile --features html $(FLAGS) --input web=true --format html $(MAIN) $(WEB_OUT)
 	@python3 web_post.py $(WEB_OUT) ../模板/web.css
+	@cp $(WEB_OUT) dist/index.html
 
 # 编译为 PNG 图片,每页一图,输出到 dist/图片/
 # Compile to PNG images, one file per page
