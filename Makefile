@@ -39,10 +39,10 @@ screen: $(MAIN)
 # 网页版:HTML 导出,单栏、样式仿标准 PDF(--features html 为实验特性)
 # Web version: HTML export, single column, PDF-like styling
 WEB_OUT := dist/地狱之下.html
-web: $(MAIN) ../模板/lib.typ ../模板/web.css ../模板/webfonts/段宁毛笔小楷.ttf
+web: $(MAIN) ../模板/lib.typ ../模板/web.css ../模板/webfonts/段宁毛笔小楷.ttf ../模板/languages/zh.toml
 	@mkdir -p dist
 	$(TYPST) compile --features html $(FLAGS) --input web=true --format html $(MAIN) $(WEB_OUT)
-	@python3 web_post.py $(WEB_OUT) ../模板/web.css
+	@python3 web_post.py $(WEB_OUT) ../模板/web.css ../模板/languages/zh.toml
 	@cp $(WEB_OUT) dist/index.html
 	@mkdir -p dist/webfonts
 	@cp ../模板/webfonts/duan-kaixiao-full.woff2 ../模板/webfonts/zhaoji-shoujin.woff2 dist/webfonts/
