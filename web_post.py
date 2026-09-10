@@ -31,5 +31,50 @@ def sub_element(m: re.Match) -> str:
 
 s = re.sub(r"#元素\[([^\[\]]+)\]", sub_element, s)
 
+# 4) 注入交互脚本:目录按钮/评论触发点点击开合
+JS = (
+  "<script>"
+  "(function(){"
+  "document.addEventListener('click', function(e){"
+  "var head = e.target.closest('.uh-toc-head');"
+  "if (head) {"
+  "var toc = head.closest('.uh-toc');"
+  "toc.classList.toggle('uh-open');"
+  "head.setAttribute('aria-expanded', toc.classList.contains('uh-open'));"
+  "return;"
+  "}"
+  "var tr = e.target.closest('.uh-comment-trigger');"
+  "if (tr) {"
+  "var panel = tr.nextElementSibling;"
+  "if (panel) panel.classList.toggle('uh-open');"
+  "}"
+  "});"
+  "})();"
+  "</script>"
+)
+s = s.rstrip("\n") + JS
+
 p.write_text(s, encoding="utf-8")
 print("web: CSS 注入;标点/路径与字面元素 bug 已修")
+
+# 注入交互脚本:目录按钮/评论触发点点击开合
+JS = (
+  "<script>"
+  "(function(){"
+  "document.addEventListener('click', function(e){"
+  "var head = e.target.closest('.uh-toc-head');"
+  "if (head) {"
+  "var toc = head.closest('.uh-toc');"
+  "toc.classList.toggle('uh-open');"
+  "head.setAttribute('aria-expanded', toc.classList.contains('uh-open'));"
+  "return;"
+  "}"
+  "var tr = e.target.closest('.uh-comment-trigger');"
+  "if (tr) {"
+  "var panel = tr.nextElementSibling;"
+  "if (panel) panel.classList.toggle('uh-open');"
+  "}"
+  "});"
+  "})();"
+  "</script>"
+)

@@ -431,22 +431,4 @@ _如何成为天堂?当然是让其它地区都变成地狱_.
   = TODO
 ]
 
-#table(
-  columns: 3,
-  [*编号*], [*位置*], [*内容*],
-  ..{
-    // 修 bug:待办.csv 的"位置"(含 .typ 路径)不被标点替换(rendered as raw),
-    // "内容"里的字面 #元素[…] 真实渲染(与正文一致);">#table 阶段处置
-    // 位置文件是否参与了编译(主行星 include 已注释 → 无锚点)
-    let 未编译 = pos => pos.contains("内容/主行星")
-    let rows = csv("待办.csv").slice(1)
-    rows.map(((n, pos, body)) => (
-      [#n],
-      // 位置列 web 下为链接,跳到该 TODO 的正文锚点(#TODO(id:n) 注册);
-      // 未参与编译的位置文件(如暂被注释的 include)没有锚点,显示纯文本。
-      if is_web() and not 未编译(pos) { html.elem("a", attrs: (href: "#todo-" + n,))[raw(pos)] } else { raw(pos) },
-      // 内容做脚本渲染,使 #元素[…] 与 _斜体_ 生效
-      eval("[" + body + "]", mode: "markup", scope: (元素: 元素, 给色: none)),
-    )).flatten()
-  }
-)
+#TODO表格()
