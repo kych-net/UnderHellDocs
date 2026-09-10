@@ -393,6 +393,16 @@ _如何成为天堂?当然是让其它地区都变成地狱_.
 
 #table(
   columns: 3,
-  [*编号*], [*位置*], [*内容*], // 手动添加表头
-  ..csv("待办.csv").flatten().slice(3),  // 展开数据, 切掉表头.
+  [*编号*], [*位置*], [*内容*],
+  ..{
+    // 修 bug:待办.csv 的"位置"(含 .typ 路径)不被标点替换(rendered as raw),
+    // "内容"里的字面 #元素[…] 真实渲染(与正文一致);">#table 阶段处置
+    let rows = csv("待办.csv").slice(1)
+    rows.map(((n, pos, body)) => (
+      [#n],
+      raw(pos),
+      // 内容做脚本渲染,使 #元素[…] 与 _斜体_ 生效
+      eval("[" + body + "]", mode: "markup", scope: (元素: 元素, 给色: none)),
+    )).flatten()
+  }
 )
