@@ -45,7 +45,7 @@ web: $(MAIN) ../模板/lib.typ ../模板/web.css ../模板/webfonts/段宁毛笔
 	@python3 web_post.py $(WEB_OUT) ../模板/web.css
 	@cp $(WEB_OUT) dist/index.html
 	@mkdir -p dist/webfonts
-	@cp ../模板/webfonts/* dist/webfonts/
+	@cp ../模板/webfonts/duan-kaixiao-full.woff2 dist/webfonts/
 
 # 编译为 PNG 图片,每页一图,输出到 dist/图片/
 # Compile to PNG images, one file per page
