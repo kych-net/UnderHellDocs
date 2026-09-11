@@ -21,7 +21,7 @@ comment_fonts = fonts_cfg.get("comment", ["zhaoji-shoujin", "serif"])
 s = s.replace("/* 字体(由 web_post.py 从语言 toml 注入) KEY:UH_FONTS */",
  ":root{"
  "--uh-body-font:" + _css_font_list(body_fonts) + ";"
- "--uh-comment-font:" + _css_font_list(comment_fonts) + ";"
+ "--uh-comment-font:" + "'zhaoji-shoujin'," + _css_font_list(comment_fonts) + ";"
  "--uh-outline-font:" + _css_font_list(outline_fonts) + ";}")
 s = s.replace("import pathlib, re, sys, csv, io, tomllib as _toml", "import pathlib, re, sys, csv, io, tomllib")
 
