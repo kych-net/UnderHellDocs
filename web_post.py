@@ -16,11 +16,13 @@ def _css_font_list(v):
     return ",".join(("'" + x + "'" if str(x) != "serif" else str(x)) for x in v)
 
 body_fonts    = fonts_cfg.get("body",    ["LXGW WenKai", "serif"])
+outline_fonts = fonts_cfg.get("outline", ["LXGW WenKai", "serif"])
 comment_fonts = fonts_cfg.get("comment", ["zhaoji-shoujin", "serif"])
 s = s.replace("/* 字体(由 web_post.py 从语言 toml 注入) KEY:UH_FONTS */",
  ":root{"
  "--uh-body-font:" + _css_font_list(body_fonts) + ";"
- "--uh-comment-font:" + _css_font_list(comment_fonts) + ";}")
+ "--uh-comment-font:" + _css_font_list(comment_fonts) + ";"
+ "--uh-outline-font:" + _css_font_list(outline_fonts) + ";}")
 s = s.replace("import pathlib, re, sys, csv, io, tomllib as _toml", "import pathlib, re, sys, csv, io, tomllib")
 
 # 2) 修 bug:语言标点替换破坏了待办表里的文件路径(.typ → 。typ 等)
