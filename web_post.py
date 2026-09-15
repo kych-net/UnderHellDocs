@@ -18,9 +18,13 @@ def _css_font_list(v):
 body_fonts    = fonts_cfg.get("body",    ["LXGW WenKai", "serif"])
 outline_fonts = fonts_cfg.get("outline", ["LXGW WenKai", "serif"])
 comment_fonts = fonts_cfg.get("comment", ["zhaoji-shoujin", "serif"])
+# 正文字体的首选"腾/威光"等系统名在网页并无自托管就用不了,把 body 首位
+# (LXGW WenKai Mono)替换为自托管 @font-face 族名 uh-lxgw-mono;其余保留系统回退。
+# The body font's top pick LXGW WenKai Mono is auto-hosted in web as uh-lxgw-mono.
+web_body = ["uh-lxgw-mono"] + list(body_fonts[1:]) if body_fonts else ["serif"]
 s = s.replace("/* 字体(由 web_post.py 从语言 toml 注入) KEY:UH_FONTS */",
  ":root{"
- "--uh-body-font:" + _css_font_list(body_fonts) + ";"
+ "--uh-body-font:" + _css_font_list(web_body) + ";"
  "--uh-comment-font:" + "'zhaoji-shoujin'," + _css_font_list(comment_fonts) + ";"
  "--uh-outline-font:" + _css_font_list(outline_fonts) + ";}")
 s = s.replace("import pathlib, re, sys, csv, io, tomllib as _toml", "import pathlib, re, sys, csv, io, tomllib")
