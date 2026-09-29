@@ -17,17 +17,18 @@ description: "地狱之下(UnderHell)正文文档(文档/ 子模块)的写作与
 
 | 路径 | 说明 |
 |------|------|
-| `地狱之下.typ` | 正文主文件(初始化 `地狱之下模板`,引入各章节) |
-| `地狱之下附录.typ` | 语法规范参考;附录由正文 `#附录[...]` 引入 |
-| `内容/世界纲要.typ` | 世界纲要 |
-| `内容/主行星.typ` | 主行星 |
-| `内容/嗜血仙子.typ` | 嗜血仙子 |
-| `内容/怪动植物.typ` | 怪动植物 |
-| `内容/特殊能力/仙术.typ`、`灵力.typ`、`魔法.typ` | 特殊能力三篇 |
-| `内容/附录.typ` | 附录内容 |
+| `地狱之下.typ` | 全量单页入口(初始化 `网页模板`,引入各章节;PDF 与网页 `/index.html`) |
+| `配置.typ` | 站点配置(模板再导出、`网页模板`、`站内链接`、`页面` 清单) |
+| `内容/NN-名称/index.typ` | 独立页入口(网页多页站点的一页) |
+| `内容/NN-名称/正文.typ` | 该页正文,**自带 `#import "/模板/lib.typ": *`** |
+| `内容/NN-名称/…/NN-子页/index.typ` | 多级路由(如 `05-特殊能力/01-仙术/`) |
 | `元素系统.csv` | 元素系统宽表(首行=系统名,首列=元素 id) |
 | `Makefile` | 编译脚本 |
-| `web_post.py` | 网页版后处理(注入 CSS/脚本) |
+| `web_post.py` | 网页版后处理(抽外部样式、跨页元素链接、注入 CSS/脚本) |
+
+`内容/` 下的正文文件(`正文.typ`)不再被 `地狱之下.typ` 逐个 `#include`,而是:
+全量入口用 `#导入` 引入(见 `#导入("文档/内容/02-怪动植物/正文.typ", 偏移: 2)`),
+独立页用 `#include "正文.typ"` 引入。两者都靠正文自带的 `#import`。
 
 ## 编译
 
@@ -38,7 +39,7 @@ make all        # 普通版(默认)
 make print      # 省墨双栏
 make screen     # A5 单栏(手机/平板)
 make 元素系统 元素系统名=academic
-make web        # HTML 版(实验特性)
+make web        # HTML 版:完整单页 + 各独立页(experimental)
 make png / svg  # 逐页图片
 make clean
 ```
@@ -49,8 +50,8 @@ make clean
 typst compile --root .. --font-path fonts 地狱之下.typ out.pdf
 ```
 
-注意:`make` 的 FLAGS 含 `--input 纲要=false`,**默认隐藏"世界纲要"页**;直接 typst 编译
-不传则显示。逐页导出图片可用 `--pages N`。
+注意:`make` 的 FLAGS 含 `--input 纲要=false`(历史遗留,纲要已移出全量文档,只作独立页);
+逐页导出图片可用 `--pages N`。
 
 ## 元素系统
 
@@ -69,7 +70,7 @@ typst compile --root .. --font-path fonts 地狱之下.typ out.pdf
 
 ## 语法规范
 
-参考 `文档/地狱之下附录.typ`。**字数能省就省,不要说废话。**
+参考 `内容/06-附录/正文.typ` 的"排版规范"。**字数能省就省,不要说废话。**
 
 中文:以直陈、白描为基本写法。少用状语、补语和副词,只保留有实际信息的修饰。
 优先保留原本自然的语言习惯,不为深刻、优美、完整而润色。保持自然的长短句变化,
@@ -86,6 +87,11 @@ summary structures and forced conclusions.
 ## 已知坑(文档)
 
 1. 正文顶层不能出现裸 `#p`——`#` 后必须是已定义符号,否则编译失败。
-2. `#include` 相对路径以被 include 文件所在位置解析(非调用处)。
-3. 子模块处于 detached HEAD 时,推送前先 `git checkout main && git merge --ff-only <commit>`。
-4. 编码一律用 Unicode。
+2. `#include` 相对路径以被 include 文件所在位置解析(非调用处);且**不继承父文件作用域**,
+   故 `正文.typ` 必须自带 `#import "/模板/lib.typ": *`。
+3. `#导入(路径, 偏移)` 的 `路径` 以**仓库根**(`--root`)为基准,如
+   `#导入("文档/内容/02-怪动植物/正文.typ", 偏移: 2)`;独立页则直接 `#include "正文.typ"`。
+4. 页面标题层级:`正文.typ` 的 markup 标题是页面内的绝对层级;全量入口靠 `#导入` 的 `偏移`
+   降级,独立页直接用,故正文的 `#设定元素(level:)` 无需改动。
+5. 子模块处于 detached HEAD 时,推送前先 `git checkout main && git merge --ff-only <commit>`。
+6. 编码一律用 Unicode。

@@ -1,4 +1,4 @@
-#import "../../../模板/lib.typ": *
+#import "/模板/lib.typ": *
 
 
 #世界纲要[
