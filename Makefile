@@ -39,25 +39,26 @@ screen: $(MAIN)
 # 网页版:HTML 导出,单栏、样式仿标准 PDF(--features html 为实验特性)
 # Web version: HTML export, single column, PDF-like styling
 WEB_OUT := dist/地狱之下.html
-# 独立页:每个 内容/<路径>/index.typ → dist/<路径>/index.html
-# Standalone pages: each 内容/<path>/index.typ becomes dist/<path>/index.html
-PAGES := $(shell find 内容 -name index.typ 2>/dev/null)
-WEB_PAGES := $(patsubst 内容/%/index.typ,dist/%/index.html,$(PAGES))
+# 独立页:统一入口 脚本/页面.typ,页名取自 配置.typ 的 页面 清单(脚本/配置.py 读取)
+# Standalone pages: one entry (脚本/页面.typ); the page list lives in 配置.typ
+PAGES := $(shell python3 脚本/配置.py 页面 2>/dev/null)
+WEB_PAGES := $(patsubst %,dist/%/index.html,$(PAGES))
 内容全部typ := $(shell find 内容 -name '*.typ' 2>/dev/null)
 
-web: $(MAIN) $(WEB_PAGES) ../模板/lib.typ ../模板/web.css ../模板/webfonts/段宁毛笔小楷.ttf ../模板/languages/zh.toml
+web: $(MAIN) $(WEB_PAGES) 配置.typ 脚本/页面.typ ../模板/lib.typ ../模板/web.css ../模板/webfonts/段宁毛笔小楷.ttf ../模板/languages/zh.toml
 	@mkdir -p dist
 	$(TYPST) compile --features html $(FLAGS) --input web=true --format html $(MAIN) $(WEB_OUT)
 	@cp $(WEB_OUT) dist/index.html
-	@python3 web_post.py dist
+	@python3 脚本/web_post.py dist
 	@mkdir -p dist/webfonts
 	@cp ../模板/webfonts/duan-kaixiao-full.woff2 ../模板/webfonts/zhaoji-shoujin.woff2 ../模板/webfonts/lxgw-wenkai-mono.woff2 ../模板/webfonts/zhenkai-gb.woff2 dist/webfonts/
 
-# 独立页路由:% 可跨斜杠匹配,天然支持多级(内容/05-特殊能力/01-仙术/)
-# / Standalone page route: % matches across slashes, so nested routes work
-dist/%/index.html: 内容/%/index.typ $(内容全部typ) 配置.typ ../模板/lib.typ ../模板/web.css
+# 独立页路由:% 可跨斜杠匹配,天然支持多级(特殊能力/仙术);页名经 --input 页= 传给统一入口
+# / Standalone page route: % matches across slashes (特殊能力/仙术); the stem is
+# passed to the single entry as --input 页=<path>
+dist/%/index.html: 脚本/页面.typ 内容/%.typ $(内容全部typ) 配置.typ 附件/元素系统.csv ../模板/lib.typ ../模板/web.css
 	@mkdir -p $(dir $@)
-	$(TYPST) compile --features html $(FLAGS) --input web=true --format html $< $@
+	$(TYPST) compile --features html $(FLAGS) --input web=true --input 页=$* --format html $< $@
 
 # 编译为 PNG 图片,每页一图,输出到 dist/图片/
 # Compile to PNG images, one file per page

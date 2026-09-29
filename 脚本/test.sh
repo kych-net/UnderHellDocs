@@ -10,7 +10,7 @@ ERRORS=0
 fail() { echo "FAIL: $1"; ERRORS=$((ERRORS+1)); }
 pass() { echo "  OK: $1"; }
 
-cd "$(dirname "$0")"  # 文档/
+cd "$(dirname "$0")/.."  # 文档/(脚本位于 文档/脚本/)
 
 # ---------- 1. 编译测试(所有模式) ----------
 echo "=== 1. 编译测试 ==="
@@ -41,7 +41,12 @@ fi
 echo ""
 echo "=== 2. 元素系统 CSV 校验 ==="
 
-CSV="元素系统.csv"
+# CSV 路径取自 配置.typ(经 脚本/配置.py 解析),读不到则回退默认位置
+CSV=$(python3 -c "
+import sys; sys.path.insert(0, '脚本')
+from 配置 import 元素系统路径
+print(元素系统路径)
+" 2>/dev/null || echo "附件/元素系统.csv")
 if [ ! -f "$CSV" ]; then
   fail "CSV 文件不存在: $CSV"
 else
@@ -55,7 +60,7 @@ else
 
   # 检查所有文档中使用的元素是否都在 CSV 中
   # 提取文档中 #元素("xxx") 的 xxx
-  used_elements=$(grep -rhoE '#元素\("[^"]+"\)' 地狱之下.typ 地狱之下附录.typ | \
+  used_elements=$(grep -rhoE '#元素\("[^"]+"\)' 地狱之下.typ 内容/附录.typ | \
     sed -E 's/#元素\("([^"]+)"\)/\1/' | sort -u)
   csv_ids=$(tail -n +2 "$CSV" | cut -d, -f1 | sort -u)
 
@@ -82,7 +87,7 @@ echo "=== 3. 格式规范检查 ==="
 cn_space=$(python3 -c "
 import re, sys
 count = 0
-for f in ['地狱之下.typ', '地狱之下附录.typ']:
+for f in ['地狱之下.typ', '内容/附录.typ']:
     try:
         src = open(f, encoding='utf-8').read()
         count += len(re.findall(r'[\u4e00-\u9fff] [\u4e00-\u9fff]', src))
@@ -101,7 +106,7 @@ labels_check=$(python3 -c "
 import re
 defined = set()
 used = set()
-for f in ['地狱之下.typ', '地狱之下附录.typ']:
+for f in ['地狱之下.typ', '内容/附录.typ']:
     try:
         src = open(f, encoding='utf-8').read()
         defined |= set(re.findall(r'<([^>]+)>', src))
@@ -123,7 +128,7 @@ fi
 bad_numbers=$(python3 -c "
 import re
 found = []
-for f in ['地狱之下.typ', '地狱之下附录.typ']:
+for f in ['地狱之下.typ', '内容/附录.typ']:
     try:
         src = open(f, encoding='utf-8').read()
         found += re.findall(r'(?<![0-9])[1-9]\d{4,}(?![0-9])', src)

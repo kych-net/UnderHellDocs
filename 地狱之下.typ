@@ -1,7 +1,7 @@
 #import "../模板/lib.typ": *
 // 网页模板来自站点配置:站点导航链接与元素系统数据集中在那里,与各独立页一致。
 // / Web template comes from the site config, so nav links match the standalone pages.
-#import "配置.typ": 网页模板
+#import "配置.typ": 网页模板, 导入
 
 // 评论/待办用瘦金书(FZZhaoJiShouJinShuS)。判断 PDF 是否真正用上它,
 // 以 Chrome/系统阅读器为准:它们能正确显示内嵌的该字库(CID/GB1 子集)。
@@ -135,7 +135,7 @@ _如何成为天堂?当然是让其它地区都变成地狱_.
 
 #设定元素(level: 2)[怪动植物]
 
-#导入("文档/内容/02-怪动植物/正文.typ", 偏移: 2)
+#导入("内容/怪动植物.typ", 偏移: 2)
 
 #设定元素(level: 2)[怪动物]
 
@@ -278,7 +278,7 @@ _如何成为天堂?当然是让其它地区都变成地狱_.
 
 #设定元素(level: 3)[嗜血仙子]
 
-#导入("文档/内容/03-嗜血仙子/正文.typ", 偏移: 3)
+#导入("内容/嗜血仙子.typ", 偏移: 3)
 
 #设定元素(level: 3)[吟游仙子]
 
@@ -407,7 +407,7 @@ _如何成为天堂?当然是让其它地区都变成地狱_.
 // 附录: 使用模板内置 appendix 函数(字母编号 + 计数器重置)/
 // Appendix: use the built-in appendix helper from the template
 #附录[
-  #include "内容/06-附录/正文.typ"
+  #include "内容/附录.typ"
 ]
 
 #pagebreak()

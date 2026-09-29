@@ -1,6 +1,6 @@
 ---
 name: 元素系统
-description: Use when writing or editing the 地狱之下 world-building documents (文档/地狱之下.typ, 地狱之下附录.typ) and their 元素系统 (element system). Explains the 元素 function, the CSV format (元素系统.csv), how to reference core concepts, cross-reference labels/IDs, and how to add a new concept or element system.
+description: Use when writing or editing the 地狱之下 world-building documents (文档/地狱之下.typ, 文档/内容/附录.typ) and their 元素系统 (element system). Explains the 元素 function, the CSV format (附件/元素系统.csv), how to reference core concepts, cross-reference labels/IDs, and how to add a new concept or element system.
 ---
 
 # 元素系统 (Element System)
@@ -17,7 +17,7 @@ element at compile time.
 - **普通系统直接读取 ID 的值**。The "普通" (common) system needs no CSV rows:
   `#元素("怪动植物")` under 普通 simply returns `怪动植物`.
 - **其他系统在 CSV 中为同一元素提供不同名词**。Other systems (e.g. `别名`,
-  `academic`) map an element to an alternative term in `元素系统.csv`.
+  `academic`) map an element to an alternative term in `附件/元素系统.csv`.
 - **缺失自动回退**。If the current system lacks an element, it falls back to
   the common name (the ID itself).
 
@@ -25,9 +25,9 @@ element at compile time.
 
 | Path | Purpose |
 | ---- | ------- |
-| `文档/元素系统.csv` | The single wide-format CSV: header = systems, first col = element ids, cells = terms. |
+| `文档/附件/元素系统.csv` | The single wide-format CSV: header = systems, first col = element ids, cells = terms. |
 | `文档/地狱之下.typ` | Main world document (compiled with `--root ..`). |
-| `文档/地狱之下附录.typ` | Appendix, included by the main document. |
+| `文档/内容/附录.typ` | Appendix, included by the main document. |
 | `模板/lib.typ` | Template; defines `#元素()`, `#设置元素系统()`, `#set-元素系统数据()`. |
 
 ## CSV format
@@ -97,7 +97,7 @@ Chinese label directly (`<教育>`, `@教育`).
 ## Adding a new concept
 
 1. Use `#元素("概念名")` in the document.
-2. Add a row to `元素系统.csv` with the element as `id`, filling only the
+2. Add a row to `附件/元素系统.csv` with the element as `id`, filling only the
    system columns that have an alternative name (leave the rest empty).
 3. Under 普通 it automatically renders the concept name itself.
 

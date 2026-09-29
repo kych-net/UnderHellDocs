@@ -1,6 +1,8 @@
 import csv, pathlib, re, sys
 
-根 = pathlib.Path(__file__).resolve().parent            # 文档/
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))   # 脚本/
+from 配置 import 根, 元素系统路径, 读页面                          # 文档/ 与站点配置
+
 参数 = sys.argv[1] if len(sys.argv) > 1 else "dist"
 dist = pathlib.Path(参数)
 if not dist.is_absolute():
@@ -25,18 +27,16 @@ def 扫(文本, url):
         登记(m.group(1), url)
 
 扫((根 / "地狱之下.typ").read_text(encoding="utf-8"), "/")
-for 页 in sorted((根 / "内容").rglob("index.typ")):
-    url = "/" + 页.parent.relative_to(根 / "内容").as_posix() + "/"
-    正文 = 页.parent / "正文.typ"
+for 页, _标题 in 读页面():
+    正文 = 根 / "内容" / (页 + ".typ")
     if 正文.exists():
-        扫(正文.read_text(encoding="utf-8"), url)
+        扫(正文.read_text(encoding="utf-8"), "/" + 页 + "/")
 
 # CSV:元素 id 与"默认"显示名不同的,把显示名一并登记(HTML 里显示的是默认名)
 # / Also register CSV display names that differ from the element id.
 名映射 = {}
-csv_path = 根 / "元素系统.csv"
-if csv_path.exists():
-    with csv_path.open(encoding="utf-8") as fh:
+if 元素系统路径.exists():
+    with 元素系统路径.open(encoding="utf-8") as fh:
         for row in csv.reader(fh):
             if not row or not row[0].strip() or row[0].strip() == "id":
                 continue
