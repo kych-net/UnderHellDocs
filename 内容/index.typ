@@ -15,12 +15,14 @@
 
 #show: 网页模板
 
-// 站内导航(仅网页):导航栏只保留"首页"与外链,分页入口集中在这里(只列顶层页,子页见各目录页)。
+// 站内导航(仅网页):导航栏只保留"首页"与外链,分页入口做成卡片放在这里(只列顶层页,子页见各目录页)。
 // / In-site nav (web only): the top nav keeps only 首页 + external links; the page
-// entries live here. Printed PDF skips it (links are useless on paper).
+// entries are cards here. Printed PDF skips it (links are useless on paper).
 #if is_web() [
-  #for (路径, 名) in 页面.filter(p => not p.at(0).contains("/")) [
-    - #link("/" + 路径 + "/")[#名]
+  #html.elem("nav", attrs: (class: "uh-navcards",))[
+    #for (路径, 名) in 页面.filter(p => not p.at(0).contains("/")) [
+      #html.elem("a", attrs: (class: "uh-navcard", href: "/" + 路径 + "/"))[#名]
+    ]
   ]
 ]
 
