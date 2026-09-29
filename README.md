@@ -1,8 +1,9 @@
-# 地狱之下 - 文档
+# 地狱之下 · 文档
 
-完整PDF在[发行版](https://gitcode.com/CrossDark/UnderHellDocs/releases/)
+[地狱之下](https://gitcode.com/CrossDark/UnderHell) 项目的 Typst 正文源码,由 [架空世界模板](../模板/README.md) 渲染,可输出 PDF 与多页网页。
 
-[地狱之下](https://gitcode.com/CrossDark/UnderHell) 项目的 Typst 文档源码,使用架空世界模板渲染。
+- **PDF**:[发行版](https://gitcode.com/CrossDark/UnderHellDocs/releases/) —— 普通版 / 打印版 / 小屏版
+- **网页**:`make web` 生成多页站点 —— 首页 `/` 为全量文档,各章节为独立页
 
 ## 文件
 
@@ -23,10 +24,10 @@
 ## 编译
 
 ```bash
-# 普通版
+# 全部 PDF(普通版 + 打印版 + 小屏版,make all 已含后两者)
 make all
 
-# 打印版 / 小屏版
+# 单独生成
 make print
 make screen
 
@@ -39,19 +40,23 @@ make web
 
 ## 网页多页站点
 
-`内容/` 下每个 `<路径>.typ` 是一页正文,路径(不含 `.typ`)就是 URL 段:
-`内容/怪动植物.typ` → `/怪动植物/`,`内容/特殊能力/仙术.typ` → `/特殊能力/仙术/`。
-目录页写 `内容/<路径>/index.typ`(如 `内容/特殊能力/index.typ` → `/特殊能力/`);
-全量入口 `内容/index.typ` 同时是站点首页 `dist/index.html`。
-页面清单写在 `配置.typ` 的 `页面` 里,`脚本/配置.py` 读它、Makefile 据此编译;
-源文件优先 `内容/<路径>.typ`,没有则取 `内容/<路径>/index.typ`。
-没登记的正文(如空文件 `内容/特殊能力/灵力.typ`)不出页。
+### 路由约定
+
+- `内容/<路径>.typ` → `/<路径>/`(如 `内容/怪动植物.typ` → `/怪动植物/`,多级如 `内容/特殊能力/仙术.typ` → `/特殊能力/仙术/`)
+- `内容/<路径>/index.typ` → `/<路径>/`(目录页,如 `内容/特殊能力/index.typ` → `/特殊能力/`)
+- `内容/index.typ` → `/`,既是全量文档,也是站点首页 `dist/index.html`
+
+页面清单写在 `配置.typ` 的 `页面` 里,`脚本/配置.py` 读它、Makefile 据此编译:源文件优先 `内容/<路径>.typ`,没有则取 `内容/<路径>/index.typ`。未登记的正文(如空文件 `内容/特殊能力/灵力.typ`)不出页。
+
+### 构建
 
 各页共用一个入口 `脚本/页面.typ`,页名与源文件由 make 经 `--input 页=`、`--input 源=` 传入:
 
 ```bash
 make web   # dist/index.html(全文)+ dist/怪动植物/index.html + …
 ```
+
+### 要点
 
 - 右上角导航栏(模板参数 `页脚链接`)只留 **首页** 与站外链接(PDF/GitHub/GitCode);各页入口
   集中写在 `内容/index.typ` 的 `#目录` 前,用 `#if is_web()` 包裹——**只在网页出现,PDF 不渲染**。
