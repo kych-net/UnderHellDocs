@@ -3,64 +3,13 @@
 
 // 评论/待办用瘦金书(FZZhaoJiShouJinShuS)。判断 PDF 是否真正用上它,
 // 以 Chrome/系统阅读器为准:它们能正确显示内嵌的该字库(CID/GB1 子集)。
-// VS Code 的 pdf.js 预览会对该子集回退为本机楷体,把评论显示成与正文一致,
-// 是查看器行为而非文档缺陷,勿据此判断字体未生效。
+// VS Code 的 pdf.js 预览会对该子集回退为本机楷体,把评论显示成与正文一致,是查看器行为而非文档缺陷,勿据此判断字体未生效。
 
 // 共产主义理论扩大化尝试
 
-// 正文标点按语言渲染:读取模板按 lang 写入的_语言标点_映射,替换全部源标点;
+// 正文标点按语言渲染:标点替换函数在模板中,默认读取按 lang 写入的_语言标点_映射。
 // 数字两侧的源标点(如 50:1、小数)与多字符源(如 ...)除外,链接内文本不受影响。
-#show text: it => {
-  context {
-    let 表 = _语言标点.get()
-    if 表.len() == 0 {
-      it
-    } else {
-      let 原 = it.text
-      // 标题编号片段(如 "A."、"D.7."):纯 ASCII 编号文本不参与标点替换,
-      // 否则编号结尾的 "." 会被替换成多余的中文句号("A。")。
-      let 是编号片段 = {
-        let ok = 原.len() > 0
-        let has-dot = false
-        for c in 原.codepoints() {
-          if not ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.".contains(c)) { ok = false }
-          if c == "." { has-dot = true }
-        }
-        ok and has-dot and 原.slice(原.len() - 1) == "."
-      }
-      if 是编号片段 {
-        it
-      } else {
-      let 临时 = 原
-      // 先处理多字符源(如 "..." -> "……")
-      for (src, tgt) in 表 {
-        if src.len() > 1 {
-          临时 = 临时.replace(src, tgt)
-        }
-      }
-      // 单字符源:逐字符替换(按编码点),相邻为数字时保留(保护比例/小数)
-      let 好 = ""
-      let 字符集 = 临时.codepoints()
-      for i in range(字符集.len()) {
-        let c = 字符集.at(i)
-        let tgt = 表.at(c, default: none)
-        if tgt == none or tgt.len() == 0 {
-          好 += c
-        } else {
-          let prev = if i > 0 { 字符集.at(i - 1) } else { "" }
-          let next = if i + 1 < 字符集.len() { 字符集.at(i + 1) } else { "" }
-          if (prev != "" and "0123456789".contains(prev)) or (next != "" and "0123456789".contains(next)) {
-            好 += c
-          } else {
-            好 += tgt
-          }
-        }
-      }
-      if 好 == 原 { it } else { [#好] }
-     }
-    }
-  }
-}
+#show text: 标点替换
 
 #show: 地狱之下模板.with(
   title: "地狱之下",
