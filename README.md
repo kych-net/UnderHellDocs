@@ -53,6 +53,8 @@ make web
 make web   # dist/index.html(全文)+ dist/怪动植物/index.html + …
 ```
 
+- 右上角导航栏(模板参数 `页脚链接`)只留 **首页** 与站外链接(PDF/GitHub/GitCode);各页入口
+  集中写在 `内容/index.typ` 的 `#目录` 前,用 `#if is_web()` 包裹——**只在网页出现,PDF 不渲染**。
 - 站内链接与字体一律绝对路径(`/webfonts/`、`/怪动植物/`),天然支持多级路由。
 - 各页共享抽出的外部样式 `dist/assets/underhell.css`。
 - 元素定义在别页时,`web_post.py` 把该页的"未定义"元素重写成指向定义所在页的链接。
