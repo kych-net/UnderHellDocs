@@ -3,7 +3,7 @@
 // / Single entry for every standalone page: `make` passes the page path
 // (relative to 内容/, without .typ) via --input 页=…. Titles come from the
 // 页面 list in 配置.typ.
-#import "../配置.typ": 网页模板, 页面
+#import "../配置.typ": *
 
 #let 页 = sys.inputs.at("页", default: "")
 // 清单里没登记的页(不该出现)回退用路径本身当标题

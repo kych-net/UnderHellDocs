@@ -1,7 +1,6 @@
-#import "/模板/lib.typ": *
-// 网页模板来自站点配置:站点导航链接与元素系统数据集中在那里,与各独立页一致。
-// / Web template comes from the site config, so nav links match the standalone pages.
-#import "../配置.typ": 网页模板, 导入, 页面
+// 模板成员与站点配置统一从配置.typ取(它再导出模板/lib.typ),全项目不再直接引模板。
+// / Template members come via 配置.typ, which re-exports 模板/lib.typ.
+#import "../配置.typ": *
 
 // 评论/待办用瘦金书(FZZhaoJiShouJinShuS)。判断 PDF 是否真正用上它,
 // 以 Chrome/系统阅读器为准:它们能正确显示内嵌的该字库(CID/GB1 子集)。

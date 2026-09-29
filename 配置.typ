@@ -1,7 +1,10 @@
 // 站点配置:集中模板再导出、网页模板与页面清单。
-// 页面 #import "…/配置.typ": 网页模板 后即可用;正文文件自行
-// #import "/模板/lib.typ": *(include 不继承作用域,必须自带)。
+// 其余 .typ 一律 #import "…/配置.typ": *(不再直接引模板/lib.typ),模板成员与站点配置
+// 走同一个出口;include 不继承作用域,每个正文文件必须自带这一行。
 // / Site config: re-exports the template, defines the web template and page list.
+// Every other .typ imports from here instead of 模板/lib.typ directly.
+
+// #import "@preview/underhell:0.4.1"
 
 #import "../模板/lib.typ": *
 

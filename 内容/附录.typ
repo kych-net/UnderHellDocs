@@ -1,4 +1,4 @@
-#import "/模板/lib.typ": *
+#import "../配置.typ": *
 
 
 #设定元素(level: 1)[不对称婚姻]
