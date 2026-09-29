@@ -26,9 +26,12 @@ def 扫(文本, url):
     for m in re.finditer(r"^=+ +.+?\s*<([^<>\s]+)>\s*$", 文本, re.M):
         登记(m.group(1), url)
 
-扫((根 / "地狱之下.typ").read_text(encoding="utf-8"), "/")
+扫((根 / "内容" / "index.typ").read_text(encoding="utf-8"), "/")
 for 页, _标题 in 读页面():
+    # 页面正文:优先 内容/<页>.typ,没有则取目录页 内容/<页>/index.typ(如 特殊能力)
     正文 = 根 / "内容" / (页 + ".typ")
+    if not 正文.exists():
+        正文 = 根 / "内容" / 页 / "index.typ"
     if 正文.exists():
         扫(正文.read_text(encoding="utf-8"), "/" + 页 + "/")
 

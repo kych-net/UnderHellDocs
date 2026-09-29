@@ -1,5 +1,5 @@
 TYPST := typst
-MAIN   := 地狱之下.typ
+MAIN   := 内容/index.typ
 OUT    := dist/地狱之下.pdf
 PRINT_OUT := dist/地狱之下_打印版.pdf
 SCREEN_OUT := dist/地狱之下_小屏版.pdf
@@ -53,12 +53,18 @@ web: $(MAIN) $(WEB_PAGES) 配置.typ 脚本/页面.typ ../模板/lib.typ ../模�
 	@mkdir -p dist/webfonts
 	@cp ../模板/webfonts/duan-kaixiao-full.woff2 ../模板/webfonts/zhaoji-shoujin.woff2 ../模板/webfonts/lxgw-wenkai-mono.woff2 ../模板/webfonts/zhenkai-gb.woff2 dist/webfonts/
 
-# 独立页路由:% 可跨斜杠匹配,天然支持多级(特殊能力/仙术);页名经 --input 页= 传给统一入口
-# / Standalone page route: % matches across slashes (特殊能力/仙术); the stem is
-# passed to the single entry as --input 页=<path>
-dist/%/index.html: 脚本/页面.typ 内容/%.typ $(内容全部typ) 配置.typ 附件/元素系统.csv ../模板/lib.typ ../模板/web.css
-	@mkdir -p $(dir $@)
-	$(TYPST) compile --features html $(FLAGS) --input web=true --input 页=$* --format html $< $@
+# 独立页路由:按 页面 清单逐页生成规则。源文件优先 内容/<路径>.typ,没有则取目录页
+# 内容/<路径>/index.typ(如 特殊能力);路径经 --input 页=、源= 传给统一入口
+# / Standalone pages: one rule per page from the 页面 list. Source is 内容/<path>.typ,
+# falling back to the directory page 内容/<path>/index.typ; both are passed as
+# --input 页= / 源= to the single entry 脚本/页面.typ
+define 页规则
+dist/$(1)/index.html: 脚本/页面.typ $(if $(wildcard 内容/$(1).typ),内容/$(1).typ,内容/$(1)/index.typ) $(内容全部typ) 配置.typ 附件/元素系统.csv ../模板/lib.typ ../模板/web.css
+	@mkdir -p $$(dir $$@)
+	$(TYPST) compile --features html $(FLAGS) --input web=true --input 页=$(1) --input 源=$(if $(wildcard 内容/$(1).typ),内容/$(1).typ,内容/$(1)/index.typ) --format html 脚本/页面.typ $$@
+endef
+
+$(foreach 页,$(PAGES),$(eval $(call 页规则,$(页))))
 
 # 编译为 PNG 图片,每页一图,输出到 dist/图片/
 # Compile to PNG images, one file per page

@@ -7,9 +7,9 @@
 #   在 文档/ 目录下运行(脚本位于 文档/脚本/,路径按 文档/ 计)
 #
 # 示例 / Examples:
-#   ./脚本/typst-print --root .. 地狱之下.typ                 # 普通编译(双栏、背景图)
-#   ./脚本/typst-print --print --root .. 地狱之下.typ 输出.pdf  # 打印版(省墨、双栏、无背景)
-#   ./脚本/typst-print --screen --root .. 地狱之下.typ         # 小屏版(单栏、窄边距、保留背景)
+#   ./脚本/typst-print --root .. 内容/index.typ                 # 普通编译(双栏、背景图)
+#   ./脚本/typst-print --print --root .. 内容/index.typ 输出.pdf  # 打印版(省墨、双栏、无背景)
+#   ./脚本/typst-print --screen --root .. 内容/index.typ         # 小屏版(单栏、窄边距、保留背景)
 #
 # --print  -> typst --input print=true  (省墨打印:无背景、纯黑标题、宽边距)
 # --screen -> typst --input screen=true (小屏阅读:单栏、窄边距、小字号)

@@ -21,7 +21,7 @@ for mode in "普通|  " "打印|--input print=true " "小屏|--input screen=true
   args="${mode##*|}"
   args="${args%  }"
   out="/tmp/underhell_test_$name.pdf"
-  if $TYPST compile $FLAGS $args 地狱之下.typ "$out" 2>/dev/null; then
+  if $TYPST compile $FLAGS $args 内容/index.typ "$out" 2>/dev/null; then
     pass "编译 $name"
     rm -f "$out"
   else
@@ -30,7 +30,7 @@ for mode in "普通|  " "打印|--input print=true " "小屏|--input screen=true
 done
 
 # 附录也必须编译成功(通过 include)
-if $TYPST compile $FLAGS 地狱之下.typ /tmp/underhell_test_full.pdf 2>/dev/null; then
+if $TYPST compile $FLAGS 内容/index.typ /tmp/underhell_test_full.pdf 2>/dev/null; then
   pass "附录编译"
   rm -f /tmp/underhell_test_full.pdf
 else
@@ -60,7 +60,7 @@ else
 
   # 检查所有文档中使用的元素是否都在 CSV 中
   # 提取文档中 #元素("xxx") 的 xxx
-  used_elements=$(grep -rhoE '#元素\("[^"]+"\)' 地狱之下.typ 内容/附录.typ | \
+  used_elements=$(grep -rhoE '#元素\("[^"]+"\)' 内容/index.typ 内容/附录.typ | \
     sed -E 's/#元素\("([^"]+)"\)/\1/' | sort -u)
   csv_ids=$(tail -n +2 "$CSV" | cut -d, -f1 | sort -u)
 
@@ -87,7 +87,7 @@ echo "=== 3. 格式规范检查 ==="
 cn_space=$(python3 -c "
 import re, sys
 count = 0
-for f in ['地狱之下.typ', '内容/附录.typ']:
+for f in ['内容/index.typ', '内容/附录.typ']:
     try:
         src = open(f, encoding='utf-8').read()
         count += len(re.findall(r'[\u4e00-\u9fff] [\u4e00-\u9fff]', src))
@@ -106,7 +106,7 @@ labels_check=$(python3 -c "
 import re
 defined = set()
 used = set()
-for f in ['地狱之下.typ', '内容/附录.typ']:
+for f in ['内容/index.typ', '内容/附录.typ']:
     try:
         src = open(f, encoding='utf-8').read()
         defined |= set(re.findall(r'<([^>]+)>', src))
@@ -128,7 +128,7 @@ fi
 bad_numbers=$(python3 -c "
 import re
 found = []
-for f in ['地狱之下.typ', '内容/附录.typ']:
+for f in ['内容/index.typ', '内容/附录.typ']:
     try:
         src = open(f, encoding='utf-8').read()
         found += re.findall(r'(?<![0-9])[1-9]\d{4,}(?![0-9])', src)

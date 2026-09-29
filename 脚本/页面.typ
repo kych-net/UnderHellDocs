@@ -8,7 +8,10 @@
 #let 页 = sys.inputs.at("页", default: "")
 // 清单里没登记的页(不该出现)回退用路径本身当标题
 #let 标题 = 页面.to-dict().at(页, default: 页)
+// 正文源文件(相对 文档/):make 传 --input 源=;缺省为 内容/<页>.typ,
+// 目录页(如 特殊能力 → 内容/特殊能力/index.typ)由 make 显式传入
+#let 源 = sys.inputs.at("源", default: "内容/" + 页 + ".typ")
 
 #show: 网页模板.with(页标题: 标题)
 
-#include "../内容/" + 页 + ".typ"
+#include "../" + 源

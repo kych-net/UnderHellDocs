@@ -1,7 +1,7 @@
-#import "../模板/lib.typ": *
+#import "/模板/lib.typ": *
 // 网页模板来自站点配置:站点导航链接与元素系统数据集中在那里,与各独立页一致。
 // / Web template comes from the site config, so nav links match the standalone pages.
-#import "配置.typ": 网页模板, 导入
+#import "../配置.typ": 网页模板, 导入, 页面
 
 // 评论/待办用瘦金书(FZZhaoJiShouJinShuS)。判断 PDF 是否真正用上它,
 // 以 Chrome/系统阅读器为准:它们能正确显示内嵌的该字库(CID/GB1 子集)。
@@ -14,6 +14,15 @@
 #show text: 标点替换
 
 #show: 网页模板
+
+// 站内导航(仅网页):导航栏只保留"首页"与外链,分页入口集中在这里(只列顶层页,子页见各目录页)。
+// / In-site nav (web only): the top nav keeps only 首页 + external links; the page
+// entries live here. Printed PDF skips it (links are useless on paper).
+#if is_web() [
+  #for (路径, 名) in 页面.filter(p => not p.at(0).contains("/")) [
+    - #link("/" + 路径 + "/")[#名]
+  ]
+]
 
 #目录()
 
@@ -407,7 +416,7 @@ _如何成为天堂?当然是让其它地区都变成地狱_.
 // 附录: 使用模板内置 appendix 函数(字母编号 + 计数器重置)/
 // Appendix: use the built-in appendix helper from the template
 #附录[
-  #include "内容/附录.typ"
+  #include "附录.typ"
 ]
 
 #pagebreak()

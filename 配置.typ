@@ -18,16 +18,12 @@
   include 路径
 }
 
-// 站点导航链接:站内用绝对路径,外链(http)自动新窗口打开。
-// / Site nav links: in-site links use absolute paths; http links open in a new tab.
+// 导航栏链接(渲染为右上角 uh-site):站内只留"首页",其余分页入口在首页的导航段;
+// 外链(http)自动新窗口打开。
+// / Top-nav links: in-site keeps only 首页 (other pages are listed on the home page);
+// http links open in a new tab.
 #let 站内链接 = (
   (标签: "首页", 网址: "/", 提示: "完整文档"),
-  (标签: "世界纲要", 网址: "/世界纲要/"),
-  (标签: "怪动植物", 网址: "/怪动植物/"),
-  (标签: "嗜血仙子", 网址: "/嗜血仙子/"),
-  (标签: "主行星", 网址: "/主行星/"),
-  (标签: "特殊能力", 网址: "/特殊能力/"),
-  (标签: "附录", 网址: "/附录/"),
   (标签: "PDF", 网址: "https://github.com/kych-net/UnderHell/releases/latest", 提示: "下载 PDF(GitHub 最新发行版)"),
   (标签: "GitHub", 网址: "https://github.com/kych-net/UnderHell", 提示: "GitHub 仓库"),
   (标签: "GitCode", 网址: "https://gitcode.com/CrossDark/UnderHell", 提示: "GitCode 仓库"),
@@ -45,7 +41,8 @@
 )
 
 // 页面清单:(路径, 标题)。路径相对 内容/(不含 .typ),同时是 URL 段;
-// 脚本/配置.py 与 Makefile 据此决定编译哪些页,总览页据此列子页。
+// 脚本/配置.py 与 Makefile 据此决定编译哪些页。源文件取 内容/<路径>.typ,
+// 没有则取目录页 内容/<路径>/index.typ(如 特殊能力)。
 // / Page list: (path, title). Path is relative to 内容/ (no .typ) and doubles
 // as the URL segment; 脚本/配置.py & the Makefile derive pages from it.
 #let 页面 = (

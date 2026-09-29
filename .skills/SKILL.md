@@ -17,16 +17,18 @@ description: "地狱之下(UnderHell)正文文档(文档/ 子模块)的写作与
 
 | 路径 | 说明 |
 |------|------|
-| `地狱之下.typ` | 全量单页入口(初始化 `网页模板`,引入各章节;PDF 与网页 `/index.html`) |
+| `内容/index.typ` | 全量单页入口(初始化 `网页模板`,引入各章节;PDF 与网页 `/`),其 `#目录` 前有一份**仅网页**的站内导航(分页入口) |
 | `配置.typ` | 站点配置(模板再导出、`网页模板`、`站内链接`、`页面` 清单) |
-| `内容/<路径>.typ` | 该页正文,**自带 `#import "/模板/lib.typ": *`**;路径即 URL 段(如 `内容/怪动植物.typ`、`内容/特殊能力/仙术.typ`) |
+| `内容/<路径>.typ` | 该页正文,**自带 `#import "/模板/lib.typ": *`**;路径即 URL 段(如 `内容/怪动植物.typ`) |
+| `内容/<路径>/index.typ` | 目录页正文(如 `内容/特殊能力/index.typ` → `/特殊能力/`),同样自带 `#import` |
 | `脚本/` | `页面.typ`(独立页统一入口)、`配置.py`、`web_post.py`、`test.sh`、`typst-print` |
 | `附件/元素系统.csv` | 元素系统宽表(首行=系统名,首列=元素 id) |
 | `Makefile` | 编译脚本 |
 
-`内容/` 下的正文文件不再被 `地狱之下.typ` 逐个 `#include`,而是:
+`内容/` 下的正文文件不再被 `内容/index.typ` 逐个 `#include`,而是:
 全量入口用 `#导入` 引入(见 `#导入("内容/怪动植物.typ", 偏移: 2)`),
-独立页走统一入口 `脚本/页面.typ`(`make` 传 `--input 页=<路径>`)。两者都靠正文自带的 `#import`。
+独立页走统一入口 `脚本/页面.typ`(`make` 传 `--input 页=<路径> --input 源=<相对 文档/ 的正文路径>`,
+目录页 `内容/<路径>/index.typ` 就靠 `源=` 指定)。两者都靠正文自带的 `#import`。
 
 ## 编译
 
@@ -45,7 +47,7 @@ make clean
 直接 typst(关键:`--root ..` 使相对路径回到仓库根,`--font-path fonts`):
 
 ```bash
-typst compile --root .. --font-path fonts 地狱之下.typ out.pdf
+typst compile --root .. --font-path fonts 内容/index.typ out.pdf
 ```
 
 注意:`make` 的 FLAGS 含 `--input 纲要=false`(历史遗留,纲要已移出全量文档,只作独立页);

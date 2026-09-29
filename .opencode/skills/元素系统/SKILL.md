@@ -1,6 +1,6 @@
 ---
 name: 元素系统
-description: Use when writing or editing the 地狱之下 world-building documents (文档/地狱之下.typ, 文档/内容/附录.typ) and their 元素系统 (element system). Explains the 元素 function, the CSV format (附件/元素系统.csv), how to reference core concepts, cross-reference labels/IDs, and how to add a new concept or element system.
+description: Use when writing or editing the 地狱之下 world-building documents (文档/内容/index.typ, 文档/内容/附录.typ) and their 元素系统 (element system). Explains the 元素 function, the CSV format (附件/元素系统.csv), how to reference core concepts, cross-reference labels/IDs, and how to add a new concept or element system.
 ---
 
 # 元素系统 (Element System)
@@ -26,7 +26,7 @@ element at compile time.
 | Path | Purpose |
 | ---- | ------- |
 | `文档/附件/元素系统.csv` | The single wide-format CSV: header = systems, first col = element ids, cells = terms. |
-| `文档/地狱之下.typ` | Main world document (compiled with `--root ..`). |
+| `文档/内容/index.typ` | Main world document, full-site entry (compiled with `--root ..`). |
 | `文档/内容/附录.typ` | Appendix, included by the main document. |
 | `模板/lib.typ` | Template; defines `#元素()`, `#设置元素系统()`, `#set-元素系统数据()`. |
 
@@ -77,7 +77,7 @@ make a content block:
 
 ## Switching systems
 
-- Compile-time: `typst compile --input 元素系统=academic 地狱之下.typ out.pdf`
+- Compile-time: `typst compile --input 元素系统=academic 内容/index.typ out.pdf`
   (or `make 元素系统 元素系统名=academic` in 文档/). Default is `普通`.
 - In-document: `#设置元素系统("别名")` switches for the rest of the document.
 
