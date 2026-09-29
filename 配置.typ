@@ -13,9 +13,9 @@
 #let 元素系统文件 = "附件/元素系统.csv"
 
 // 全量入口用的 #导入:模板版本以仓库根为基准(#include "/" + 路径),这里改成
-// 相对本文件(文档/)解析,调用处直接写 "内容/怪动植物.typ",不必带 "文档/"。
+// 相对本文件(文档/)解析,调用处直接写 "内容/生物/怪动植物.typ",不必带 "文档/"。
 // / 导入 for the full entry: the template version resolves against the repo root
-// (--root); this one resolves against 文档/, so callers write "内容/怪动植物.typ".
+// (--root); this one resolves against 文档/, so callers write "内容/生物/怪动植物.typ".
 #let 导入(路径, 偏移: 1) = {
   set heading(offset: 偏移)
   include 路径
@@ -26,8 +26,8 @@
 // / Top-nav links: in-site keeps only 首页 (other pages are listed on the home page);
 // http links open in a new tab.
 #let 站内链接 = (
-  (标签: "首页", 网址: "/", 提示: "完整文档"),
-  (标签: "PDF", 网址: "https://github.com/kych-net/UnderHell/releases/latest", 提示: "下载 PDF(GitHub 最新发行版)"),
+  (标签: "首页", 网址: "/", 提示: "主文档"),
+  (标签: "PDF", 网址: "https://gitcode.com/CrossDark/UnderHell/releases/latest", 提示: "下载 PDF(GitCode 最新发行版)"),
   (标签: "GitHub", 网址: "https://github.com/kych-net/UnderHell", 提示: "GitHub 仓库"),
   (标签: "GitCode", 网址: "https://gitcode.com/CrossDark/UnderHell", 提示: "GitCode 仓库"),
 )
@@ -36,7 +36,7 @@
 // / Web template: applied by the single entry 脚本/页面.typ with --input 页=<path>.
 #let 网页模板 = 地狱之下模板.with(
   title: "地狱之下",
-  subtitle: "一个崭新的世界",
+  subtitle: "一个以调教和侍寝为内核的世界",
   author: "跨越晨昏",
   lang: "zh",
   元素系统数据: csv(元素系统文件),
@@ -50,9 +50,11 @@
 // as the URL segment; 脚本/配置.py & the Makefile derive pages from it.
 #let 页面 = (
   ("世界纲要", "世界纲要"),
-  ("怪动植物", "怪动植物"),
-  ("嗜血仙子", "嗜血仙子"),
-  ("主行星", "主行星"),
+  ("生物", "生物"),
+  ("生物/怪动植物", "怪动植物"),
+  ("生物/嗜血仙子", "嗜血仙子"),
+  ("地理", "地理"),
+  ("地理/主行星", "主行星"),
   ("特殊能力", "特殊能力"),
   ("特殊能力/仙术", "仙术"),
   ("特殊能力/魔法", "魔法"),
