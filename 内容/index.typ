@@ -12,7 +12,11 @@
 // 数字两侧的源标点(如 50:1、小数)与多字符源(如 ...)除外,链接内文本不受影响。
 #show text: 标点替换
 
-#show: 网页模板
+// PDF 封面图:web 模式不渲染整页封面(仅标题块),print 模式走纯白省墨封面,
+// 因此此图只出现在普通版与屏幕版的 PDF 上。
+// / Cover image: web renders no full-page cover, print uses an ink-saving white cover,
+// so this image only shows up in the normal and screen PDF builds.
+#show: 网页模板.with(cover: image("../../素材/图片/天堂地狱之下.jpg", width: 100%, height: 100%, fit: "cover"))
 
 // 站内导航(仅网页):导航栏只保留"首页"与外链,分页入口做成卡片放在这里(只列顶层页,子页见各目录页)。
 // / In-site nav (web only): the top nav keeps only 首页 + external links; the page
@@ -372,7 +376,7 @@ _如何成为天堂?当然是让其它地区都变成地狱_.
 
 #设定元素(level: 2)[真神]
 
-真正的神明
+真正的神明,具有#元素[编制]
 
 #设定元素(level: 3)[支配者]
 
