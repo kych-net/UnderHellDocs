@@ -1,7 +1,7 @@
-// 站点配置:集中模板再导出、网页模板与页面清单。
+// 站点配置:集中模板再导出、网页模板与导航卡片。
 // 其余 .typ 一律 #import "…/配置.typ": *(不再直接引模板/lib.typ),模板成员与站点配置
 // 走同一个出口;include 不继承作用域,每个正文文件必须自带这一行。
-// / Site config: re-exports the template, defines the web template and page list.
+// / Site config: re-exports the template, defines the web template and nav cards.
 // Every other .typ imports from here instead of 模板/lib.typ directly.
 
 // #import "@preview/underhell:0.4.1"
@@ -43,12 +43,14 @@
   页脚链接: 站内链接,
 )
 
-// 页面清单:(路径, 标题)。路径相对 内容/(不含 .typ),同时是 URL 段;
-// 脚本/配置.py 与 Makefile 据此决定编译哪些页。源文件取 内容/<路径>.typ,
-// 没有则取目录页 内容/<路径>/index.typ(如 特殊能力)。
-// / Page list: (path, title). Path is relative to 内容/ (no .typ) and doubles
-// as the URL segment; 脚本/配置.py & the Makefile derive pages from it.
-#let 页面 = (
+// 导航卡片清单:(路径, 标题)。只管网页导航显示哪些页、什么顺序、卡片叫什么;
+// 路径相对 内容/(不含 .typ),与 URL 段一致。**页面集合不在这里定义**——构建期
+// 由 脚本/配置.py 扫 内容/**/*.typ 得到(见 扫页面() 与 Makefile 的 PAGES),
+// 不经 Typst。新增页要在导航露出,在此加一行。
+// / Nav-card list: (path, title). Only controls which pages appear in the web
+// navigation, in what order, under what name. The page set itself is scanned
+// from 内容/ at build time by 脚本/配置.py; Typst does not define URLs.
+#let 导航 = (
   ("世界纲要", "世界纲要"),
   ("生物", "生物"),
   ("生物/怪动植物", "怪动植物"),

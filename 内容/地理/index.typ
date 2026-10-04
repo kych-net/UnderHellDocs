@@ -5,6 +5,6 @@
 
 = 地理
 
-#for (路径, 名) in 页面.filter(p => p.at(0).starts-with("地理/")) [
+#for (路径, 名) in 导航.filter(p => p.at(0).starts-with("地理/")) [
   - #link("/" + 路径 + "/")[#名]
 ]

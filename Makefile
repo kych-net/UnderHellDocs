@@ -39,8 +39,8 @@ screen: $(MAIN)
 # 网页版:HTML 导出,单栏、样式仿标准 PDF(--features html 为实验特性)
 # Web version: HTML export, single column, PDF-like styling
 WEB_OUT := dist/地狱之下.html
-# 独立页:统一入口 脚本/页面.typ,页名取自 配置.typ 的 页面 清单(脚本/配置.py 读取)
-# Standalone pages: one entry (脚本/页面.typ); the page list lives in 配置.typ
+# 独立页:统一入口 脚本/页面.typ,页面集合由 脚本/配置.py 扫 内容/ 目录树得到(扫页面())
+# Standalone pages: one entry (脚本/页面.typ); the page set is scanned from 内容/
 PAGES := $(shell python3 脚本/配置.py 页面 2>/dev/null)
 WEB_PAGES := $(patsubst %,dist/%/index.html,$(PAGES))
 内容全部typ := $(shell find 内容 -name '*.typ' 2>/dev/null)
@@ -53,9 +53,9 @@ web: $(MAIN) $(WEB_PAGES) 配置.typ 脚本/页面.typ ../模板/lib.typ ../模�
 	@mkdir -p dist/webfonts
 	@cp ../模板/webfonts/duan-kaixiao-full.woff2 ../模板/webfonts/zhaoji-shoujin.woff2 ../模板/webfonts/lxgw-wenkai-mono.woff2 ../模板/webfonts/zhenkai-gb.woff2 dist/webfonts/
 
-# 独立页路由:按 页面 清单逐页生成规则。源文件优先 内容/<路径>.typ,没有则取目录页
-# 内容/<路径>/index.typ(如 特殊能力);路径经 --input 页=、源= 传给统一入口
-# / Standalone pages: one rule per page from the 页面 list. Source is 内容/<path>.typ,
+# 独立页路由:按 内容/ 目录树逐页生成规则(脚本/配置.py 扫出)。源文件优先 内容/<路径>.typ,
+# 没有则取目录页 内容/<路径>/index.typ(如 特殊能力);路径经 --input 页=、源= 传给统一入口
+# / Standalone pages: one rule per page scanned from 内容/. Source is 内容/<path>.typ,
 # falling back to the directory page 内容/<path>/index.typ; both are passed as
 # --input 页= / 源= to the single entry 脚本/页面.typ
 define 页规则

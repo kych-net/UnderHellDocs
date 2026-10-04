@@ -1,7 +1,7 @@
 import csv, pathlib, re, sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))   # 脚本/
-from 配置 import 根, 元素系统路径, 读页面                          # 文档/ 与站点配置
+from 配置 import 根, 元素系统路径, 扫页面                          # 文档/ 与站点配置
 
 参数 = sys.argv[1] if len(sys.argv) > 1 else "dist"
 dist = pathlib.Path(参数)
@@ -27,7 +27,7 @@ def 扫(文本, url):
         登记(m.group(1), url)
 
 扫((根 / "内容" / "index.typ").read_text(encoding="utf-8"), "/")
-for 页, _标题 in 读页面():
+for 页, _标题 in 扫页面():
     # 页面正文:优先 内容/<页>.typ,没有则取目录页 内容/<页>/index.typ(如 特殊能力)
     正文 = 根 / "内容" / (页 + ".typ")
     if not 正文.exists():

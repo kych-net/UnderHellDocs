@@ -7,6 +7,6 @@
 
 #元素[特殊能力者]使用的#元素[特殊能力],按来源分为:
 
-#for (路径, 名) in 页面.filter(p => p.at(0).starts-with("特殊能力/")) [
+#for (路径, 名) in 导航.filter(p => p.at(0).starts-with("特殊能力/")) [
   - #link("/" + 路径 + "/")[#名]
 ]

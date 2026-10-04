@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""读取 文档/配置.typ 里的站点配置,供 Python 侧脚本共用。
+"""读取 文档/配置.typ 的站点配置,并扫描 内容/ 目录树,供 Python 侧脚本共用。
 
 只解析字面量,不执行 Typst。公开:
   根            文档/ 的绝对路径
   元素系统路径   元素系统 CSV 的绝对路径
-  读页面()       页面清单 [(路径, 标题), …],路径相对 内容/ 且不含 .typ
+  扫页面()       扫描 内容/ 得到的页面清单 [(路径, 标题), …],路径相对 内容/ 且不含 .typ
 
 命令行:python3 脚本/配置.py 页面   → 空格分隔的页面路径(供 Makefile $(shell …))
 """
@@ -22,34 +22,33 @@ def _字面量(名):
     return m.group(1)
 
 
-def _括号块(名):
-    """取 `#let <名> = ( … )` 的括号内文本(按括号配对,不解析字符串)。"""
-    i = 文本.find("#let " + 名)
-    if i < 0:
-        raise SystemExit("配置.py: 配置.typ 里未找到 " + 名)
-    i = 文本.find("(", i)
-    depth = 0
-    for j in range(i, len(文本)):
-        if 文本[j] == "(":
-            depth += 1
-        elif 文本[j] == ")":
-            depth -= 1
-            if depth == 0:
-                return 文本[i + 1:j]
-    raise SystemExit("配置.py: " + 名 + " 括号不配对")
-
-
 元素系统路径 = 根 / _字面量("元素系统文件")
 
 
-def 读页面():
-    """页面清单 [(路径, 标题), …];路径相对 内容/ 且不含 .typ。"""
-    return re.findall(r'\(\s*"([^"]+)"\s*,\s*"([^"]+)"\s*\)', _括号块("页面"))
+def 扫页面():
+    """扫描 内容/**/*.typ 得到页面清单 [(路径, 标题), …],按路径排序。
+
+    路径相对 内容/ 且不含 .typ,同时是 URL 段。规则:
+      内容/<路径>.typ        → (路径, 文件名)
+      内容/<目录>/index.typ  → (目录, 目录名)
+    排除全量入口 内容/index.typ;空文件也算一页(不按大小过滤)。
+    """
+    基 = 根 / "内容"
+    页 = []
+    for f in sorted(基.rglob("*.typ")):
+        rel = f.relative_to(基)
+        if rel == pathlib.Path("index.typ"):
+            continue
+        if f.name == "index.typ":
+            页.append((rel.parent.as_posix(), rel.parent.name))
+        else:
+            页.append((rel.with_suffix("").as_posix(), f.stem))
+    return 页
 
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "页面":
-        print(" ".join(p for p, _ in 读页面()))
+        print(" ".join(p for p, _ in 扫页面()))
     else:
         print("用法:python3 脚本/配置.py 页面", file=sys.stderr)
         sys.exit(1)

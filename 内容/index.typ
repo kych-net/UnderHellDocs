@@ -23,7 +23,7 @@
 // entries are cards here. Printed PDF skips it (links are useless on paper).
 #if is_web() [
   #html.elem("nav", attrs: (class: "uh-navcards",))[
-    #for (路径, 名) in 页面.filter(p => not p.at(0).contains("/")) [
+    #for (路径, 名) in 导航.filter(p => not p.at(0).contains("/")) [
       #html.elem("a", attrs: (class: "uh-navcard", href: "/" + 路径 + "/"))[#名]
     ]
   ]
