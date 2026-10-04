@@ -36,7 +36,7 @@
 // / Web template: applied by the single entry 脚本/页面.typ with --input 页=<path>.
 #let 网页模板 = 地狱之下模板.with(
   title: "地狱之下",
-  subtitle: "一个以调教和侍寝为内核的世界",
+  subtitle: "不对称的调教,侍寝与奴役",
   author: "跨越晨昏",
   lang: "zh",
   元素系统数据: csv(元素系统文件),
