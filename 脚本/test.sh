@@ -41,12 +41,9 @@ fi
 echo ""
 echo "=== 2. 元素系统 CSV 校验 ==="
 
-# CSV 路径取自 配置.typ(经 脚本/配置.py 解析),读不到则回退默认位置
-CSV=$(python3 -c "
-import sys; sys.path.insert(0, '脚本')
-from 配置 import 元素系统路径
-print(元素系统路径)
-" 2>/dev/null || echo "附件/元素系统.csv")
+# CSV 路径取自 配置.typ 的 元素系统文件 一行,读不到则回退默认位置
+CSV=$(sed -nE 's/^#let[[:space:]]+元素系统文件[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/p' 配置.typ)
+CSV=${CSV:-附件/元素系统.csv}
 if [ ! -f "$CSV" ]; then
   fail "CSV 文件不存在: $CSV"
 else
@@ -83,17 +80,11 @@ echo ""
 echo "=== 3. 格式规范检查 ==="
 
 # 3a. 中文字符间无空格(附录:"字之间别随便空格")
-# 使用 python 跨平台检查,macOS grep 不支持 -P
-cn_space=$(python3 -c "
-import re, sys
-count = 0
-for f in ['内容/index.typ', '内容/附录.typ']:
-    try:
-        src = open(f, encoding='utf-8').read()
-        count += len(re.findall(r'[\u4e00-\u9fff] [\u4e00-\u9fff]', src))
-    except: pass
-print(count)
-")
+# 用 perl(经 -CSD 按 UTF-8 解码),macOS grep 不支持 -P / \u 转义
+cn_space=$(perl -CSD -ne '
+  while (/[\x{4e00}-\x{9fff}] [\x{4e00}-\x{9fff}]/g) { $c++ }
+  END { print $c + 0 }
+' 内容/index.typ 内容/附录.typ)
 if [ "$cn_space" = "0" ]; then
   pass "中文字符间无空格"
 else
@@ -101,23 +92,14 @@ else
 fi
 
 # 3b. 交叉引用标签一致性:所有 @xxx 都有对应的 <xxx>
-# 使用 python 跨平台检查
-labels_check=$(python3 -c "
-import re
-defined = set()
-used = set()
-for f in ['内容/index.typ', '内容/附录.typ']:
-    try:
-        src = open(f, encoding='utf-8').read()
-        defined |= set(re.findall(r'<([^>]+)>', src))
-        # 设定元素(level: n)[名] 会在标题+锚点模式下于编译期生成 <名> 标签
-        defined |= set(re.findall(r'设定元素\([^)]*level:\s*\d+[^)]*\)\[([^\]]+)\]', src))
-        used |= set(m.lstrip('@') for m in re.findall(r'@[A-Za-z\u4e00-\u9fff]+', src))
-    except: pass
-orphan = used - defined
-if orphan:
-    print(' '.join(sorted(orphan)))
-")
+# 用 perl 跨平台检查(无 Python 依赖)
+labels_check=$(perl -CSD -ne '
+  $defined{$1} = 1 while /<([^>]+)>/g;
+  # 设定元素(level: n)[名] 会在标题+锚点模式下于编译期生成 <名> 标签
+  $defined{$1} = 1 while /设定元素\([^)]*level:\s*\d+[^)]*\)\[([^\]]+)\]/g;
+  $used{$1} = 1 while /@([\x{4e00}-\x{9fff}A-Za-z]+)/g;
+  END { print join(" ", sort grep { !$defined{$_} } keys %used) }
+' 内容/index.typ 内容/附录.typ)
 if [ -z "$labels_check" ]; then
   pass "所有交叉引用有对应标签"
 else
@@ -125,17 +107,10 @@ else
 fi
 
 # 3c. 大数用科学计数法(附录:"万级及以上数值改用科学计数法")
-bad_numbers=$(python3 -c "
-import re
-found = []
-for f in ['内容/index.typ', '内容/附录.typ']:
-    try:
-        src = open(f, encoding='utf-8').read()
-        found += re.findall(r'(?<![0-9])[1-9]\d{4,}(?![0-9])', src)
-    except: pass
-for n in sorted(set(found))[:5]:
-    print(n)
-")
+bad_numbers=$(perl -CSD -ne '
+  while (/(?<![0-9])[1-9]\d{4,}(?![0-9])/g) { $found{$&} = 1 }
+  END { my @s = sort keys %found; splice(@s, 5) if @s > 5; print join("\n", @s) }
+' 内容/index.typ 内容/附录.typ)
 if [ -z "$bad_numbers" ]; then
   pass "无非科学计数法的万级数值"
 else

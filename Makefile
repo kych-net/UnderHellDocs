@@ -37,34 +37,33 @@ screen: $(MAIN)
 	$(TYPST) compile $(FLAGS) --input 元素系统=$(元素系统名) $(MAIN) $(元素系统输出)
 
 # 网页版:HTML 导出,单栏、样式仿标准 PDF(--features html 为实验特性)
-# Web version: HTML export, single column, PDF-like styling
-WEB_OUT := dist/地狱之下.html
-# 独立页:统一入口 脚本/页面.typ,页面集合由 脚本/配置.py 扫 内容/ 目录树得到(扫页面())
-# Standalone pages: one entry (脚本/页面.typ); the page set is scanned from 内容/
-PAGES := $(shell python3 脚本/配置.py 页面 2>/dev/null)
-WEB_PAGES := $(patsubst %,dist/%/index.html,$(PAGES))
-内容全部typ := $(shell find 内容 -name '*.typ' 2>/dev/null)
-
-web: $(MAIN) $(WEB_PAGES) 配置.typ 脚本/页面.typ ../模板/lib.typ ../模板/web.css ../模板/webfonts/段宁毛笔小楷.ttf ../模板/languages/zh.toml
-	@mkdir -p dist
-	$(TYPST) compile --features html $(FLAGS) --input web=true --format html $(MAIN) $(WEB_OUT)
-	@cp $(WEB_OUT) dist/index.html
-	@python3 脚本/web_post.py dist
+# 与 template/Makefile 的 web 目标一致:扫 内容/ 全部 .typ,入口 → dist/index.html,
+# 其余页经统一入口 脚本/页面.typ → dist/<路径>/index.html;再拷 内容/ 下的静态 .html,
+# 收尾跑 脚本/web_post.sh。页面集合按目录树自动扫出,新增页不必改 Makefile。
+# Web version: HTML export; mirrors template/Makefile's web target (scans 内容/).
+web:
+	@set -e; for f in $$(find 内容 -name '*.typ' | sort); do \
+	  rel="$${f#内容/}"; \
+	  case "$$rel" in \
+	    index.typ)   out="dist/index.html"; src="$$f"; args="";; \
+	    */index.typ) p="$${rel%/index.typ}"; out="dist/$$p/index.html"; \
+	                 src="脚本/页面.typ"; args="--input 页=$$p --input 源=$$f";; \
+	    *)           p="$${rel%.typ}"; out="dist/$$p/index.html"; \
+	                 src="脚本/页面.typ"; args="--input 页=$$p --input 源=$$f";; \
+	  esac; \
+	  mkdir -p "$$(dirname "$$out")"; \
+	  echo "HTML $$f -> $$out"; \
+	  $(TYPST) compile --features html $(FLAGS) --input web=true $$args --format html "$$src" "$$out"; \
+	done
+	@set -e; for f in $$(find 内容 -name '*.html' | sort); do \
+	  out="dist/$${f#内容/}"; \
+	  mkdir -p "$$(dirname "$$out")"; \
+	  echo "COPY $$f -> $$out"; \
+	  cp "$$f" "$$out"; \
+	done
+	@sh 脚本/web_post.sh dist
 	@mkdir -p dist/webfonts
-	@cp ../模板/webfonts/duan-kaixiao-full.woff2 ../模板/webfonts/zhaoji-shoujin.woff2 ../模板/webfonts/lxgw-wenkai-mono.woff2 ../模板/webfonts/zhenkai-gb.woff2 dist/webfonts/
-
-# 独立页路由:按 内容/ 目录树逐页生成规则(脚本/配置.py 扫出)。源文件优先 内容/<路径>.typ,
-# 没有则取目录页 内容/<路径>/index.typ(如 特殊能力);路径经 --input 页=、源= 传给统一入口
-# / Standalone pages: one rule per page scanned from 内容/. Source is 内容/<path>.typ,
-# falling back to the directory page 内容/<path>/index.typ; both are passed as
-# --input 页= / 源= to the single entry 脚本/页面.typ
-define 页规则
-dist/$(1)/index.html: 脚本/页面.typ $(if $(wildcard 内容/$(1).typ),内容/$(1).typ,内容/$(1)/index.typ) $(内容全部typ) 配置.typ 附件/元素系统.csv ../模板/lib.typ ../模板/web.css
-	@mkdir -p $$(dir $$@)
-	$(TYPST) compile --features html $(FLAGS) --input web=true --input 页=$(1) --input 源=$(if $(wildcard 内容/$(1).typ),内容/$(1).typ,内容/$(1)/index.typ) --format html 脚本/页面.typ $$@
-endef
-
-$(foreach 页,$(PAGES),$(eval $(call 页规则,$(页))))
+	@cp ../模板/webfonts/*.woff2 dist/webfonts/
 
 # 编译为 PNG 图片,每页一图,输出到 dist/图片/
 # Compile to PNG images, one file per page

@@ -8,8 +8,8 @@
 
 #import "../模板/lib.typ": *
 
-// 元素系统数据:全站唯一来源。Python 侧脚本(脚本/配置.py)从同一行读路径。
-// / Element-system data: single source of truth; 脚本/配置.py reads the same line.
+// 元素系统数据:全站唯一来源。脚本/web_post.sh 与 脚本/test.sh 从同一行读路径。
+// / Element-system data: single source of truth; 脚本/web_post.sh and test.sh read the same line.
 #let 元素系统文件 = "附件/元素系统.csv"
 
 // 全量入口用的 #导入:模板版本以仓库根为基准(#include "/" + 路径),这里改成
@@ -45,11 +45,10 @@
 
 // 导航卡片清单:(路径, 标题)。只管网页导航显示哪些页、什么顺序、卡片叫什么;
 // 路径相对 内容/(不含 .typ),与 URL 段一致。**页面集合不在这里定义**——构建期
-// 由 脚本/配置.py 扫 内容/**/*.typ 得到(见 扫页面() 与 Makefile 的 PAGES),
-// 不经 Typst。新增页要在导航露出,在此加一行。
+// 由 Makefile 的 web 目标扫 内容/**/*.typ 得到,不经 Typst。新增页要在导航露出,在此加一行。
 // / Nav-card list: (path, title). Only controls which pages appear in the web
 // navigation, in what order, under what name. The page set itself is scanned
-// from 内容/ at build time by 脚本/配置.py; Typst does not define URLs.
+// from 内容/ at build time by the Makefile's web target; Typst does not define URLs.
 #let 导航 = (
   ("世界纲要", "世界纲要"),
   ("生物", "生物"),
