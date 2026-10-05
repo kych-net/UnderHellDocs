@@ -16,7 +16,7 @@
 // 因此此图只出现在普通版与屏幕版的 PDF 上。
 // / Cover image: web renders no full-page cover, print uses an ink-saving white cover,
 // so this image only shows up in the normal and screen PDF builds.
-#show: 网页模板.with(cover: image("../../素材/图片/天堂地狱之下.jpg", width: 100%, height: 100%, fit: "cover"))
+#show: 网页模板.with(cover: image("../../图片/天堂地狱之下.jpg", width: 100%, height: 100%, fit: "cover"))
 
 // 站内导航(仅网页):导航栏只保留"首页"与外链,分页入口做成卡片放在这里(只列顶层页,子页见各目录页)。
 // / In-site nav (web only): the top nav keeps only 首页 + external links; the page
