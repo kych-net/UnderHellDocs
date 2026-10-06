@@ -8,7 +8,7 @@
 
 = 形态
 
-// #figure(image("../../../图片/怪动植物三视图.svg", width: 100%), numbering: "1", caption: [三视图:正、侧、背.])
+#figure(image("../../../素材/图片/怪动植物/怪动植物.jpg", width: 100%), numbering: "1", caption: [三视图:正、侧、背.])
 
 == 头部
 
