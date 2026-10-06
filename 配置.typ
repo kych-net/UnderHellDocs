@@ -4,9 +4,9 @@
 // / Site config: re-exports the template, defines the web template and nav cards.
 // Every other .typ imports from here instead of 模板/lib.typ directly.
 
-// #import "@preview/underhell:0.4.1"
+#import "@preview/underhell:0.6.1": *
 
-#import "../模板/lib.typ": *
+// #import "../模板/lib.typ": *
 
 // 元素系统数据:全站唯一来源。脚本/web_post.sh 与 脚本/test.sh 从同一行读路径。
 // / Element-system data: single source of truth; 脚本/web_post.sh and test.sh read the same line.
